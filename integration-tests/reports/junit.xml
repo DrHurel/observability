@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="71" failures="0" errors="0" time="11.022">
+  <testsuite name="OpenTelemetry Tracing Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-22T22:56:50" time="5.309" tests="8">
+    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Jaeger UI is accessible" time="0.018">
+    </testcase>
+    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Jaeger API is responsive" time="0.005">
+    </testcase>
+    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Backend service is registered in Jaeger" time="2.016">
+    </testcase>
+    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Traces contain spans" time="2.017">
+    </testcase>
+    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Traces have proper structure" time="0.008">
+    </testcase>
+    <testcase classname="OpenTelemetry Tracing Tests OpenTelemetry Collector" name="OTLP HTTP endpoint is accessible" time="0.023">
+    </testcase>
+    <testcase classname="OpenTelemetry Tracing Tests OpenTelemetry Collector" name="Collector container is healthy" time="0.073">
+    </testcase>
+    <testcase classname="OpenTelemetry Tracing Tests Trace Propagation" name="API calls generate new traces" time="0.928">
+    </testcase>
+  </testsuite>
+  <testsuite name="Message Queue Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-22T22:56:55" time="5.183" tests="6">
+    <testcase classname="Message Queue Tests Kafka Broker" name="Kafka container is running" time="0.024">
+    </testcase>
+    <testcase classname="Message Queue Tests Kafka Broker" name="Kafka broker is responsive via docker exec" time="1.095">
+    </testcase>
+    <testcase classname="Message Queue Tests Kafka Topics" name="user-events topic exists" time="0.997">
+    </testcase>
+    <testcase classname="Message Queue Tests Kafka Topics" name="product-events topic exists" time="1.013">
+    </testcase>
+    <testcase classname="Message Queue Tests Kafka Topics" name="Can describe topics" time="1.063">
+    </testcase>
+    <testcase classname="Message Queue Tests Kafka Consumer Groups" name="Can list consumer groups" time="0.959">
+    </testcase>
+  </testsuite>
+  <testsuite name="Database Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-22T22:57:00" time="0.128" tests="12">
+    <testcase classname="Database Tests MongoDB" name="MongoDB connection is successful" time="0.004">
+    </testcase>
+    <testcase classname="Database Tests MongoDB" name="Users collection exists and is accessible" time="0.008">
+    </testcase>
+    <testcase classname="Database Tests MongoDB" name="Products collection exists and is accessible" time="0.001">
+    </testcase>
+    <testcase classname="Database Tests MongoDB" name="Users collection contains documents" time="0.002">
+    </testcase>
+    <testcase classname="Database Tests MongoDB" name="Products collection contains documents" time="0.001">
+    </testcase>
+    <testcase classname="Database Tests MongoDB" name="Can perform CRUD operations on MongoDB" time="0.007">
+    </testcase>
+    <testcase classname="Database Tests ClickHouse" name="ClickHouse is responsive" time="0.003">
+    </testcase>
+    <testcase classname="Database Tests ClickHouse" name="ClickHouse can execute queries" time="0.002">
+    </testcase>
+    <testcase classname="Database Tests ClickHouse" name="user_events table exists" time="0.002">
+    </testcase>
+    <testcase classname="Database Tests ClickHouse" name="product_events table exists" time="0.002">
+    </testcase>
+    <testcase classname="Database Tests ClickHouse" name="Can query user_events table" time="0.003">
+    </testcase>
+    <testcase classname="Database Tests ClickHouse" name="Can query product_events table" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="Backend API Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-22T22:57:00" time="0.131" tests="14">
+    <testcase classname="Backend API Tests Health &amp; Availability" name="Backend service is accessible" time="0.006">
+    </testcase>
+    <testcase classname="Backend API Tests Health &amp; Availability" name="Health check returns UP status" time="0.003">
+    </testcase>
+    <testcase classname="Backend API Tests Health &amp; Availability" name="Actuator info endpoint is available" time="0.003">
+    </testcase>
+    <testcase classname="Backend API Tests Users API" name="GET /api/users returns array" time="0.003">
+    </testcase>
+    <testcase classname="Backend API Tests Users API" name="POST /api/users creates a new user" time="0.007">
+    </testcase>
+    <testcase classname="Backend API Tests Users API" name="GET /api/users/:id returns specific user" time="0.008">
+    </testcase>
+    <testcase classname="Backend API Tests Users API" name="GET /api/users/:id returns 404 for non-existent user" time="0.025">
+    </testcase>
+    <testcase classname="Backend API Tests Products API" name="GET /api/products returns array" time="0.005">
+    </testcase>
+    <testcase classname="Backend API Tests Products API" name="POST /api/products creates a new product" time="0.005">
+    </testcase>
+    <testcase classname="Backend API Tests Products API" name="GET /api/products/:id returns specific product" time="0.007">
+    </testcase>
+    <testcase classname="Backend API Tests Products API" name="PUT /api/products/:id updates a product" time="0.009">
+    </testcase>
+    <testcase classname="Backend API Tests Products API" name="DELETE /api/products/:id removes a product" time="0.012">
+    </testcase>
+    <testcase classname="Backend API Tests API Error Handling" name="POST /api/users with invalid data returns 400" time="0.003">
+    </testcase>
+    <testcase classname="Backend API Tests API Error Handling" name="POST /api/products with invalid data returns 400" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="Metrics &amp; Monitoring Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-22T22:57:00" time="0.114" tests="14">
+    <testcase classname="Metrics &amp; Monitoring Tests Grafana" name="Grafana is accessible" time="0.004">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Grafana" name="Grafana health check returns OK" time="0.001">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Grafana" name="Grafana datasources are configured" time="0.006">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Grafana" name="Grafana UI is accessible" time="0.005">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="Actuator metrics endpoint is available" time="0.003">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="Prometheus metrics endpoint is available" time="0.005">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="JVM metrics are exposed" time="0.005">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="HTTP metrics are exposed" time="0.013">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="Specific metric can be queried" time="0.003">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Health Endpoints" name="Liveness probe endpoint works" time="0.026">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Health Endpoints" name="Readiness probe endpoint works" time="0.004">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Health Endpoints" name="Health details are available" time="0.003">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Logging" name="Loggers endpoint is available or returns error" time="0.002">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Logging" name="Actuator endpoints are accessible" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="Infrastructure Health Checks" errors="0" failures="0" skipped="0" timestamp="2025-12-22T22:57:00" time="0.075" tests="10">
+    <testcase classname="Infrastructure Health Checks Docker Environment" name="Docker daemon is accessible" time="0.016">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Docker Environment" name="Required containers are running" time="0.003">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="MongoDB container is running" time="0.002">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="ClickHouse container is running" time="0.001">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="Kafka container is running" time="0.001">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="Backend Application container is running" time="0.001">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="Frontend Application container is running" time="0.002">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="Jaeger container is running" time="0.001">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="OpenTelemetry Collector container is running" time="0.001">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Network Connectivity" name="Docker network exists" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Frontend Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-22T22:57:01" time="0.034" tests="7">
+    <testcase classname="Frontend Tests Availability" name="Frontend is accessible" time="0.003">
+    </testcase>
+    <testcase classname="Frontend Tests Availability" name="Frontend serves HTML content" time="0.002">
+    </testcase>
+    <testcase classname="Frontend Tests Availability" name="Frontend contains app root element" time="0.002">
+    </testcase>
+    <testcase classname="Frontend Tests Static Assets" name="JavaScript bundle is served" time="0.001">
+    </testcase>
+    <testcase classname="Frontend Tests Static Assets" name="CSS styles are applied" time="0.001">
+    </testcase>
+    <testcase classname="Frontend Tests Application Content" name="Frontend contains application branding" time="0.001">
+    </testcase>
+    <testcase classname="Frontend Tests SSR Health" name="Server-side rendering returns complete HTML" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,60 @@
+{
+    "name": "observability-integration-tests",
+    "version": "1.0.0",
+    "description": "Integration test suite for the Observability project",
+    "main": "index.js",
+    "scripts": {
+        "test": "jest --runInBand --verbose",
+        "test:ci": "jest --runInBand --ci --reporters=default --reporters=jest-junit",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
+        "test:infrastructure": "jest --testPathPattern=infrastructure",
+        "test:api": "jest --testPathPattern=api",
+        "test:frontend": "jest --testPathPattern=frontend",
+        "test:database": "jest --testPathPattern=database",
+        "test:tracing": "jest --testPathPattern=tracing",
+        "test:messaging": "jest --testPathPattern=messaging"
+    },
+    "keywords": [
+        "integration-tests",
+        "observability",
+        "opentelemetry"
+    ],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/jest": "^29.5.14",
+        "axios": "^1.7.9",
+        "dockerode": "^4.0.4",
+        "jest": "^29.7.0",
+        "jest-junit": "^16.0.0",
+        "mongodb": "^6.12.0"
+    },
+    "jest": {
+        "testEnvironment": "node",
+        "testTimeout": 30000,
+        "verbose": true,
+        "setupFilesAfterEnv": [
+            "./jest.setup.js"
+        ],
+        "testMatch": [
+            "**/__tests__/**/*.test.js"
+        ],
+        "reporters": [
+            "default",
+            [
+                "jest-junit",
+                {
+                    "outputDirectory": "./reports",
+                    "outputName": "junit.xml"
+                }
+            ]
+        ]
+    },
+    "jest-junit": {
+        "outputDirectory": "./reports",
+        "outputName": "junit.xml",
+        "classNameTemplate": "{classname}",
+        "titleTemplate": "{title}"
+    }
+}
