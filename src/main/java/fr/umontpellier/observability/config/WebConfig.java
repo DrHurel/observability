@@ -2,6 +2,7 @@ package fr.umontpellier.observability.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
+    public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOrigins(
                         "http://localhost:4200",
@@ -36,7 +37,13 @@ public class WebConfig implements WebMvcConfigurer {
                 "http://localhost:80",
                 "http://localhost",
                 "http://127.0.0.1:4200"));
+        // Allow all headers including OpenTelemetry trace context headers
         config.setAllowedHeaders(Arrays.asList("*"));
+        // Expose trace context headers for the frontend to read
+        config.setExposedHeaders(Arrays.asList(
+                "traceparent",
+                "tracestate",
+                "baggage"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setMaxAge(3600L);
 
