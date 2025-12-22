@@ -1,0 +1,63 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+        cors:
+          allowed_origins:
+            - "http://localhost:4200"
+            - "http://localhost:80"
+            - "*"
+
+processors:
+  batch:
+    timeout: 10s
+    send_batch_size: 1024
+
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+
+  # Add resource attributes for service identification
+  resource:
+    attributes:
+      - key: deployment.environment
+        value: production
+        action: insert
+
+exporters:
+  # Export to Jaeger
+  otlp:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+
+  # Export to console for debugging
+  logging:
+    loglevel: info
+
+  # Prometheus metrics exporter
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch, resource]
+      exporters: [otlp, logging]
+
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [prometheus, logging]
+
+  extensions: []
+
+  telemetry:
+    logs:
+      level: info
+    metrics:
+      address: 0.0.0.0:8888

@@ -93,11 +93,52 @@ services:
       timeout: 5s
       retries: 5
 
+  # Jaeger Service - Distributed Tracing Backend
+  jaeger:
+    image: jaegertracing/all-in-one:1.53
+    container_name: jaeger
+    ports:
+      - "16686:16686"  # Jaeger UI
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+      LOG_LEVEL: info
+    networks:
+      - observability-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider --quiet http://localhost:16686 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # OpenTelemetry Collector
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.93.0
+    container_name: otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"    # OTLP gRPC receiver
+      - "4318:4318"    # OTLP HTTP receiver
+      - "8888:8888"    # Prometheus metrics
+      - "8889:8889"    # Prometheus exporter
+      - "13133:13133"  # Health check
+    networks:
+      - observability-network
+    depends_on:
+      jaeger:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider --quiet http://localhost:13133 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # Application Service
   application:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     container_name: observability-app
     ports:
       - "8080:8080"
@@ -128,7 +169,7 @@ services:
   # Frontend Service
   frontend:
     build:
-      context: ./frontend
+      context: ../frontend
       dockerfile: Dockerfile
     container_name: observability-frontend
     ports:
