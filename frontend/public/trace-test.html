@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenTelemetry Trace Test Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .info-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .scenario-section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .scenario-section h2 {
+            color: #2196F3;
+            margin-top: 0;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #1976D2;
+        }
+
+        button:active {
+            background-color: #0D47A1;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .success-btn {
+            background-color: #4CAF50;
+        }
+
+        .success-btn:hover {
+            background-color: #45a049;
+        }
+
+        .error-btn {
+            background-color: #f44336;
+        }
+
+        .error-btn:hover {
+            background-color: #da190b;
+        }
+
+        .warning-btn {
+            background-color: #ff9800;
+        }
+
+        .warning-btn:hover {
+            background-color: #e68900;
+        }
+
+        #output {
+            background-color: #263238;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 3px 0;
+        }
+
+        .log-success {
+            color: #4CAF50;
+        }
+
+        .log-error {
+            color: #f44336;
+        }
+
+        .log-info {
+            color: #2196F3;
+        }
+
+        .log-warning {
+            color: #ff9800;
+        }
+
+        .clear-btn {
+            background-color: #607D8B;
+            margin-top: 10px;
+        }
+
+        .clear-btn:hover {
+            background-color: #455A64;
+        }
+
+        .jaeger-link {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3cd;
+            border-radius: 4px;
+        }
+
+        .jaeger-link a {
+            color: #856404;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .jaeger-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 OpenTelemetry Trace Test Page</h1>
+    <p class="subtitle">Generate various traces to test end-to-end distributed tracing</p>
+
+    <div class="info-box">
+        <strong>ℹ️ About This Page:</strong> This page allows you to manually trigger different API requests to generate
+        traces.
+        Each button click creates a trace that propagates from the browser to the backend.
+        View the traces in Jaeger UI to see the complete request flow.
+    </div>
+
+    <div class="scenario-section">
+        <h2>👥 Scenario 1: User Management</h2>
+        <p>Create, read, and query user data. Watch how traces capture the full request lifecycle.</p>
+        <div class="button-group">
+            <button onclick="createUser()" class="success-btn">Create New User</button>
+            <button onclick="getAllUsers()">Get All Users</button>
+            <button onclick="getUserById()">Get User by ID</button>
+            <button onclick="getUserByEmail()">Get User by Email</button>
+        </div>
+    </div>
+
+    <div class="scenario-section">
+        <h2>📦 Scenario 2: Product Management</h2>
+        <p>Perform CRUD operations on products. Each operation generates detailed traces.</p>
+        <div class="button-group">
+            <button onclick="createProduct()" class="success-btn">Create New Product</button>
+            <button onclick="getAllProducts()">Get All Products</button>
+            <button onclick="getProductById()">Get Product by ID</button>
+            <button onclick="updateProduct()" class="warning-btn">Update Product</button>
+            <button onclick="deleteProduct()" class="error-btn">Delete Product</button>
+        </div>
+    </div>
+
+    <div class="scenario-section">
+        <h2>⚡ Scenario 3: Rapid Fire Requests</h2>
+        <p>Generate multiple concurrent requests to see how traces handle high load.</p>
+        <div class="button-group">
+            <button onclick="rapidFireUsers()">10 User Requests</button>
+            <button onclick="rapidFireProducts()">10 Product Requests</button>
+            <button onclick="rapidFireMixed()">20 Mixed Requests</button>
+        </div>
+    </div>
+
+    <div class="scenario-section">
+        <h2>❌ Scenario 4: Error Scenarios</h2>
+        <p>Generate errors to see how traces capture and display error information.</p>
+        <div class="button-group">
+            <button onclick="trigger404()" class="error-btn">Trigger 404 Error</button>
+            <button onclick="trigger400()" class="error-btn">Trigger 400 Error</button>
+            <button onclick="multipleErrors()" class="error-btn">Multiple Errors</button>
+        </div>
+    </div>
+
+    <div class="scenario-section">
+        <h2>🔄 Scenario 5: Complex Workflows</h2>
+        <p>Execute multi-step operations that create interconnected traces.</p>
+        <div class="button-group">
+            <button onclick="createAndVerify()">Create & Verify User</button>
+            <button onclick="fullCrudCycle()">Full CRUD Cycle</button>
+            <button onclick="complexWorkflow()">Complex Workflow</button>
+        </div>
+    </div>
+
+    <div class="jaeger-link">
+        🎯 <a href="http://localhost:16686" target="_blank">Open Jaeger UI to View Traces →</a>
+    </div>
+
+    <div class="scenario-section">
+        <h2>📊 Output Console</h2>
+        <div id="output"></div>
+        <button onclick="clearOutput()" class="clear-btn">Clear Output</button>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api';
+        let requestCounter = 0;
+
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            output.appendChild(entry);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '';
+            log('Output cleared', 'info');
+        }
+
+        async function makeRequest(method, endpoint, body = null, description = '') {
+            requestCounter++;
+            const reqId = requestCounter;
+
+            log(`#${reqId} → ${description || method + ' ' + endpoint}`, 'info');
+
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+
+                const response = await fetch(`${API_URL}${endpoint}`, options);
+                const data = await response.json().catch(() => null);
+
+                if (response.ok) {
+                    log(`#${reqId} ✓ ${response.status} ${response.statusText}`, 'success');
+                    if (data) {
+                        log(`#${reqId} Response: ${JSON.stringify(data).substring(0, 100)}...`, 'info');
+                    }
+                } else {
+                    log(`#${reqId} ✗ ${response.status} ${response.statusText}`, 'error');
+                    if (data) {
+                        log(`#${reqId} Error: ${JSON.stringify(data)}`, 'error');
+                    }
+                }
+
+                return data;
+            } catch (error) {
+                log(`#${reqId} ✗ Network error: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+
+        // Scenario 1: User Management
+        async function createUser() {
+            const randomId = Math.floor(Math.random() * 10000);
+            const user = {
+                name: `User ${randomId}`,
+                email: `user${randomId}@example.com`,
+                age: Math.floor(Math.random() * 50) + 20,
+                department: ['Engineering', 'Sales', 'Marketing', 'IT'][Math.floor(Math.random() * 4)]
+            };
+            await makeRequest('POST', '/users', user, 'Creating new user');
+        }
+
+        async function getAllUsers() {
+            await makeRequest('GET', '/users', null, 'Fetching all users');
+        }
+
+        async function getUserById() {
+            const users = await makeRequest('GET', '/users', null, 'Getting user list for ID lookup');
+            if (users && users.length > 0) {
+                const userId = users[0].id;
+                await makeRequest('GET', `/users/${userId}`, null, `Fetching user by ID: ${userId}`);
+            } else {
+                log('No users found. Create a user first.', 'warning');
+            }
+        }
+
+        async function getUserByEmail() {
+            const users = await makeRequest('GET', '/users', null, 'Getting user list for email lookup');
+            if (users && users.length > 0) {
+                const userEmail = users[0].email;
+                await makeRequest('GET', `/users/email/${userEmail}`, null, `Fetching user by email: ${userEmail}`);
+            } else {
+                log('No users found. Create a user first.', 'warning');
+            }
+        }
+
+        // Scenario 2: Product Management
+        async function createProduct() {
+            const products = ['Laptop', 'Monitor', 'Keyboard', 'Mouse', 'Headphones', 'Webcam', 'Speaker', 'Tablet'];
+            const randomProduct = products[Math.floor(Math.random() * products.length)];
+            const product = {
+                name: `${randomProduct} ${Math.floor(Math.random() * 1000)}`,
+                description: `Premium ${randomProduct.toLowerCase()} for professionals`,
+                price: Math.floor(Math.random() * 1000) + 50,
+                quantity: Math.floor(Math.random() * 200) + 10
+            };
+            await makeRequest('POST', '/products', product, 'Creating new product');
+        }
+
+        async function getAllProducts() {
+            await makeRequest('GET', '/products', null, 'Fetching all products');
+        }
+
+        async function getProductById() {
+            const products = await makeRequest('GET', '/products', null, 'Getting product list for ID lookup');
+            if (products && products.length > 0) {
+                const productId = products[0].id;
+                await makeRequest('GET', `/products/${productId}`, null, `Fetching product by ID: ${productId}`);
+            } else {
+                log('No products found. Create a product first.', 'warning');
+            }
+        }
+
+        async function updateProduct() {
+            const products = await makeRequest('GET', '/products', null, 'Getting product list for update');
+            if (products && products.length > 0) {
+                const product = products[0];
+                const updatedProduct = {
+                    ...product,
+                    name: product.name + ' (Updated)',
+                    price: product.price * 1.1,
+                };
+                await makeRequest('PUT', `/products/${product.id}`, updatedProduct, `Updating product: ${product.id}`);
+            } else {
+                log('No products found. Create a product first.', 'warning');
+            }
+        }
+
+        async function deleteProduct() {
+            const products = await makeRequest('GET', '/products', null, 'Getting product list for deletion');
+            if (products && products.length > 0) {
+                const productId = products[products.length - 1].id;
+                await makeRequest('DELETE', `/products/${productId}`, null, `Deleting product: ${productId}`);
+            } else {
+                log('No products found. Create a product first.', 'warning');
+            }
+        }
+
+        // Scenario 3: Rapid Fire
+        async function rapidFireUsers() {
+            log('Starting rapid fire: 10 user requests', 'warning');
+            const promises = [];
+            for (let i = 0; i < 10; i++) {
+                promises.push(makeRequest('GET', '/users', null, `Rapid user request ${i + 1}`));
+            }
+            await Promise.all(promises);
+            log('Rapid fire completed', 'success');
+        }
+
+        async function rapidFireProducts() {
+            log('Starting rapid fire: 10 product requests', 'warning');
+            const promises = [];
+            for (let i = 0; i < 10; i++) {
+                promises.push(makeRequest('GET', '/products', null, `Rapid product request ${i + 1}`));
+            }
+            await Promise.all(promises);
+            log('Rapid fire completed', 'success');
+        }
+
+        async function rapidFireMixed() {
+            log('Starting rapid fire: 20 mixed requests', 'warning');
+            const promises = [];
+            for (let i = 0; i < 20; i++) {
+                const endpoint = i % 2 === 0 ? '/users' : '/products';
+                promises.push(makeRequest('GET', endpoint, null, `Rapid mixed request ${i + 1}`));
+            }
+            await Promise.all(promises);
+            log('Rapid fire completed', 'success');
+        }
+
+        // Scenario 4: Error Scenarios
+        async function trigger404() {
+            await makeRequest('GET', '/users/nonexistent-id-12345', null, 'Triggering 404: Non-existent user');
+            await makeRequest('GET', '/products/invalid-product-id', null, 'Triggering 404: Non-existent product');
+        }
+
+        async function trigger400() {
+            await makeRequest('POST', '/users', { name: '', email: 'invalid' }, 'Triggering 400: Invalid user data');
+            await makeRequest('POST', '/products', { name: '', price: -10 }, 'Triggering 400: Invalid product data');
+        }
+
+        async function multipleErrors() {
+            log('Generating multiple error scenarios', 'warning');
+            await trigger404();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await trigger400();
+        }
+
+        // Scenario 5: Complex Workflows
+        async function createAndVerify() {
+            log('Starting workflow: Create and verify user', 'warning');
+            const randomId = Math.floor(Math.random() * 10000);
+            const user = {
+                name: `Workflow User ${randomId}`,
+                email: `workflow${randomId}@example.com`,
+                age: 30,
+                department: 'Engineering'
+            };
+
+            const createdUser = await makeRequest('POST', '/users', user, 'Step 1: Creating user');
+            if (createdUser && createdUser.id) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                await makeRequest('GET', `/users/${createdUser.id}`, null, 'Step 2: Verifying user by ID');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                await makeRequest('GET', `/users/email/${createdUser.email}`, null, 'Step 3: Verifying user by email');
+            }
+            log('Workflow completed', 'success');
+        }
+
+        async function fullCrudCycle() {
+            log('Starting workflow: Full CRUD cycle', 'warning');
+
+            // Create
+            const product = {
+                name: `CRUD Test Product ${Date.now()}`,
+                description: 'Test product for CRUD cycle',
+                price: 99.99,
+                quantity: 10
+            };
+            const created = await makeRequest('POST', '/products', product, 'Step 1: Create');
+
+            if (created && created.id) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Read
+                await makeRequest('GET', `/products/${created.id}`, null, 'Step 2: Read');
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Update
+                const updated = { ...created, name: created.name + ' (Updated)', price: 149.99 };
+                await makeRequest('PUT', `/products/${created.id}`, updated, 'Step 3: Update');
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Delete
+                await makeRequest('DELETE', `/products/${created.id}`, null, 'Step 4: Delete');
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Verify deletion
+                await makeRequest('GET', `/products/${created.id}`, null, 'Step 5: Verify deletion (expect 404)');
+            }
+            log('Full CRUD cycle completed', 'success');
+        }
+
+        async function complexWorkflow() {
+            log('Starting complex workflow with multiple operations', 'warning');
+
+            // Create user
+            const user = {
+                name: `Complex User ${Date.now()}`,
+                email: `complex${Date.now()}@example.com`,
+                age: 25,
+                department: 'IT'
+            };
+            const createdUser = await makeRequest('POST', '/users', user, 'Step 1: Create user');
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // Create product
+            const product = {
+                name: `Complex Product ${Date.now()}`,
+                description: 'Product for complex workflow',
+                price: 299.99,
+                quantity: 5
+            };
+            const createdProduct = await makeRequest('POST', '/products', product, 'Step 2: Create product');
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // Fetch all users
+            await makeRequest('GET', '/users', null, 'Step 3: List all users');
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // Fetch all products
+            await makeRequest('GET', '/products', null, 'Step 4: List all products');
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // Verify specific resources
+            if (createdUser && createdUser.id) {
+                await makeRequest('GET', `/users/${createdUser.id}`, null, 'Step 5: Verify user');
+            }
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            if (createdProduct && createdProduct.id) {
+                await makeRequest('GET', `/products/${createdProduct.id}`, null, 'Step 6: Verify product');
+            }
+
+            log('Complex workflow completed', 'success');
+        }
+
+        // Initial message
+        log('OpenTelemetry Trace Test Page loaded', 'success');
+        log('Click buttons to generate traces. View traces at http://localhost:16686', 'info');
+    </script>
+</body>
+
+</html>
