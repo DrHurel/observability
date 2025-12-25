@@ -1,33 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="126" failures="0" errors="0" time="12.809">
-  <testsuite name="Authentication Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:38:11" time="0.406" tests="37">
-    <testcase classname="Authentication Tests User Registration" name="POST /api/users creates a new user for registration" time="0.022">
+<testsuites name="jest tests" tests="126" failures="0" errors="0" time="12.618">
+  <testsuite name="OpenTelemetry Tracing Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:54:38" time="7.283" tests="8">
+    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Jaeger UI is accessible" time="0.014">
     </testcase>
-    <testcase classname="Authentication Tests User Registration" name="Registration with existing email returns 409 conflict (unique constraint on profiles)" time="0.03">
+    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Jaeger API is responsive" time="0.002">
+    </testcase>
+    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Backend service is registered in Jaeger" time="2.012">
+    </testcase>
+    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Traces contain spans" time="2.02">
+    </testcase>
+    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Traces have proper structure" time="0.011">
+    </testcase>
+    <testcase classname="OpenTelemetry Tracing Tests OpenTelemetry Collector" name="OTLP HTTP endpoint is accessible" time="0.022">
+    </testcase>
+    <testcase classname="OpenTelemetry Tracing Tests OpenTelemetry Collector" name="Collector container is healthy" time="0.071">
+    </testcase>
+    <testcase classname="OpenTelemetry Tracing Tests Trace Propagation" name="API calls generate new traces" time="3.016">
+    </testcase>
+  </testsuite>
+  <testsuite name="Message Queue Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:54:45" time="4.68" tests="6">
+    <testcase classname="Message Queue Tests Kafka Broker" name="Kafka container is running" time="0.018">
+    </testcase>
+    <testcase classname="Message Queue Tests Kafka Broker" name="Kafka broker is responsive via docker exec" time="1.002">
+    </testcase>
+    <testcase classname="Message Queue Tests Kafka Topics" name="user-events topic exists" time="0.904">
+    </testcase>
+    <testcase classname="Message Queue Tests Kafka Topics" name="product-events topic exists" time="0.917">
+    </testcase>
+    <testcase classname="Message Queue Tests Kafka Topics" name="Can describe topics" time="0.933">
+    </testcase>
+    <testcase classname="Message Queue Tests Kafka Consumer Groups" name="Can list consumer groups" time="0.887">
+    </testcase>
+  </testsuite>
+  <testsuite name="Authentication Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:54:50" time="0.226" tests="37">
+    <testcase classname="Authentication Tests User Registration" name="POST /api/users creates a new user for registration" time="0.011">
+    </testcase>
+    <testcase classname="Authentication Tests User Registration" name="Registration with existing email returns 409 conflict (unique constraint on profiles)" time="0.027">
     </testcase>
     <testcase classname="Authentication Tests User Registration" name="Registration with missing password returns 400" time="0.003">
     </testcase>
-    <testcase classname="Authentication Tests User Registration" name="Registration with missing email returns 400" time="0.003">
+    <testcase classname="Authentication Tests User Registration" name="Registration with missing email returns 400" time="0.004">
     </testcase>
     <testcase classname="Authentication Tests User Lookup (Login Support)" name="GET /api/users returns list that can be searched by email" time="0.003">
     </testcase>
-    <testcase classname="Authentication Tests User Lookup (Login Support)" name="GET /api/users/:id retrieves user by ID for session" time="0.003">
+    <testcase classname="Authentication Tests User Lookup (Login Support)" name="GET /api/users/:id retrieves user by ID for session" time="0.002">
     </testcase>
-    <testcase classname="Authentication Tests Frontend Login Page" name="Login page is accessible" time="0.003">
+    <testcase classname="Authentication Tests Frontend Login Page" name="Login page is accessible" time="0.002">
     </testcase>
-    <testcase classname="Authentication Tests Frontend Login Page" name="Login page contains login form elements" time="0.001">
+    <testcase classname="Authentication Tests Frontend Login Page" name="Login page contains login form elements" time="0.002">
     </testcase>
-    <testcase classname="Authentication Tests Frontend Login Page" name="Login page contains login functionality" time="0.002">
+    <testcase classname="Authentication Tests Frontend Login Page" name="Login page contains login functionality" time="0.001">
     </testcase>
-    <testcase classname="Authentication Tests Frontend Registration Page" name="Registration page is accessible" time="0.001">
+    <testcase classname="Authentication Tests Frontend Registration Page" name="Registration page is accessible" time="0.002">
     </testcase>
-    <testcase classname="Authentication Tests Frontend Registration Page" name="Registration page contains registration form" time="0.002">
+    <testcase classname="Authentication Tests Frontend Registration Page" name="Registration page contains registration form" time="0.001">
     </testcase>
     <testcase classname="Authentication Tests Frontend Protected Routes" name="My Shop page is accessible" time="0.001">
     </testcase>
     <testcase classname="Authentication Tests Frontend Protected Routes" name="Admin page is accessible" time="0.001">
     </testcase>
-    <testcase classname="Authentication Tests Frontend Protected Routes" name="Profiles page is accessible" time="0.002">
+    <testcase classname="Authentication Tests Frontend Protected Routes" name="Profiles page is accessible" time="0.001">
     </testcase>
     <testcase classname="Authentication Tests Frontend Navigation" name="Home page shows login/register buttons when not logged in" time="0.001">
     </testcase>
@@ -35,39 +67,39 @@
     </testcase>
     <testcase classname="Authentication Tests Frontend Navigation" name="Navigation contains ShopTrack branding" time="0.001">
     </testcase>
-    <testcase classname="User Profiling Integration Profiles API" name="GET /api/profiles returns profiles list" time="0.004">
+    <testcase classname="User Profiling Integration Profiles API" name="GET /api/profiles returns profiles list" time="0.005">
     </testcase>
     <testcase classname="User Profiling Integration Profiles API" name="GET /api/profiles/statistics returns profile statistics" time="0.003">
     </testcase>
-    <testcase classname="User Profiling Integration Profiles API" name="Profiles have correct structure" time="0.004">
+    <testcase classname="User Profiling Integration Profiles API" name="Profiles have correct structure" time="0.003">
     </testcase>
-    <testcase classname="User Profiling Integration Action Recording with User Context" name="API calls with X-User-Id header are accepted" time="0.005">
+    <testcase classname="User Profiling Integration Action Recording with User Context" name="API calls with X-User-Id header are accepted" time="0.007">
     </testcase>
     <testcase classname="User Profiling Integration Action Recording with User Context" name="API calls with X-User-Email header are accepted" time="0.007">
     </testcase>
-    <testcase classname="User Profiling Integration Action Recording with User Context" name="Multiple actions create user activity" time="0.023">
+    <testcase classname="User Profiling Integration Action Recording with User Context" name="Multiple actions create user activity" time="0.026">
     </testcase>
     <testcase classname="User Profiling Integration Profile Types" name="GET /api/profiles/type/READ_HEAVY returns read-heavy profiles" time="0.003">
     </testcase>
-    <testcase classname="User Profiling Integration Profile Types" name="GET /api/profiles/type/WRITE_HEAVY returns write-heavy profiles" time="0.002">
+    <testcase classname="User Profiling Integration Profile Types" name="GET /api/profiles/type/WRITE_HEAVY returns write-heavy profiles" time="0.004">
     </testcase>
-    <testcase classname="User Profiling Integration Profile Types" name="GET /api/profiles/type/EXPENSIVE_SEEKER returns expensive-seeker profiles" time="0.003">
+    <testcase classname="User Profiling Integration Profile Types" name="GET /api/profiles/type/EXPENSIVE_SEEKER returns expensive-seeker profiles" time="0.002">
     </testcase>
-    <testcase classname="User Profiling Integration Profile Types" name="GET /api/profiles/type/BALANCED returns balanced profiles" time="0.003">
+    <testcase classname="User Profiling Integration Profile Types" name="GET /api/profiles/type/BALANCED returns balanced profiles" time="0.002">
     </testcase>
-    <testcase classname="Shopping Flow Integration Complete Shopping Workflow" name="Seller can create a product" time="0.008">
+    <testcase classname="Shopping Flow Integration Complete Shopping Workflow" name="Seller can create a product" time="0.006">
     </testcase>
-    <testcase classname="Shopping Flow Integration Complete Shopping Workflow" name="Buyer can view products" time="0.006">
+    <testcase classname="Shopping Flow Integration Complete Shopping Workflow" name="Buyer can view products" time="0.009">
     </testcase>
-    <testcase classname="Shopping Flow Integration Complete Shopping Workflow" name="Buyer can view specific product details" time="0.005">
+    <testcase classname="Shopping Flow Integration Complete Shopping Workflow" name="Buyer can view specific product details" time="0.004">
     </testcase>
-    <testcase classname="Shopping Flow Integration Complete Shopping Workflow" name="Seller can update their product" time="0.009">
+    <testcase classname="Shopping Flow Integration Complete Shopping Workflow" name="Seller can update their product" time="0.007">
     </testcase>
-    <testcase classname="Shopping Flow Integration Complete Shopping Workflow" name="Seller can delete their product" time="0.007">
+    <testcase classname="Shopping Flow Integration Complete Shopping Workflow" name="Seller can delete their product" time="0.014">
     </testcase>
-    <testcase classname="Admin Features Integration Admin Dashboard Data" name="Users count is available" time="0.002">
+    <testcase classname="Admin Features Integration Admin Dashboard Data" name="Users count is available" time="0.013">
     </testcase>
-    <testcase classname="Admin Features Integration Admin Dashboard Data" name="Products count is available" time="0.003">
+    <testcase classname="Admin Features Integration Admin Dashboard Data" name="Products count is available" time="0.004">
     </testcase>
     <testcase classname="Admin Features Integration Admin Dashboard Data" name="Profiles stats are available for admin view" time="0.003">
     </testcase>
@@ -76,72 +108,10 @@
     <testcase classname="Admin Features Integration Admin Frontend Page" name="Admin dashboard contains statistics elements" time="0.002">
     </testcase>
   </testsuite>
-  <testsuite name="OpenTelemetry Tracing Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:38:11" time="7.231" tests="8">
-    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Jaeger UI is accessible" time="0.005">
-    </testcase>
-    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Jaeger API is responsive" time="0.002">
-    </testcase>
-    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Backend service is registered in Jaeger" time="2.015">
-    </testcase>
-    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Traces contain spans" time="2.017">
-    </testcase>
-    <testcase classname="OpenTelemetry Tracing Tests Jaeger" name="Traces have proper structure" time="0.008">
-    </testcase>
-    <testcase classname="OpenTelemetry Tracing Tests OpenTelemetry Collector" name="OTLP HTTP endpoint is accessible" time="0.02">
-    </testcase>
-    <testcase classname="OpenTelemetry Tracing Tests OpenTelemetry Collector" name="Collector container is healthy" time="0.065">
-    </testcase>
-    <testcase classname="OpenTelemetry Tracing Tests Trace Propagation" name="API calls generate new traces" time="3.067">
-    </testcase>
-  </testsuite>
-  <testsuite name="Message Queue Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:38:18" time="4.749" tests="6">
-    <testcase classname="Message Queue Tests Kafka Broker" name="Kafka container is running" time="0.016">
-    </testcase>
-    <testcase classname="Message Queue Tests Kafka Broker" name="Kafka broker is responsive via docker exec" time="1.04">
-    </testcase>
-    <testcase classname="Message Queue Tests Kafka Topics" name="user-events topic exists" time="0.906">
-    </testcase>
-    <testcase classname="Message Queue Tests Kafka Topics" name="product-events topic exists" time="0.895">
-    </testcase>
-    <testcase classname="Message Queue Tests Kafka Topics" name="Can describe topics" time="0.946">
-    </testcase>
-    <testcase classname="Message Queue Tests Kafka Consumer Groups" name="Can list consumer groups" time="0.929">
-    </testcase>
-  </testsuite>
-  <testsuite name="Metrics &amp; Monitoring Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:38:23" time="0.086" tests="14">
-    <testcase classname="Metrics &amp; Monitoring Tests Grafana" name="Grafana is accessible" time="0.003">
-    </testcase>
-    <testcase classname="Metrics &amp; Monitoring Tests Grafana" name="Grafana health check returns OK" time="0.001">
-    </testcase>
-    <testcase classname="Metrics &amp; Monitoring Tests Grafana" name="Grafana datasources are configured" time="0.006">
-    </testcase>
-    <testcase classname="Metrics &amp; Monitoring Tests Grafana" name="Grafana UI is accessible" time="0.004">
-    </testcase>
-    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="Actuator metrics endpoint is available" time="0.003">
-    </testcase>
-    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="Prometheus metrics endpoint is available" time="0.004">
-    </testcase>
-    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="JVM metrics are exposed" time="0.004">
-    </testcase>
-    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="HTTP metrics are exposed" time="0.009">
-    </testcase>
-    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="Specific metric can be queried" time="0.002">
-    </testcase>
-    <testcase classname="Metrics &amp; Monitoring Tests Health Endpoints" name="Liveness probe endpoint works" time="0.024">
-    </testcase>
-    <testcase classname="Metrics &amp; Monitoring Tests Health Endpoints" name="Readiness probe endpoint works" time="0.004">
-    </testcase>
-    <testcase classname="Metrics &amp; Monitoring Tests Health Endpoints" name="Health details are available" time="0.002">
-    </testcase>
-    <testcase classname="Metrics &amp; Monitoring Tests Logging" name="Loggers endpoint is available or returns error" time="0.001">
-    </testcase>
-    <testcase classname="Metrics &amp; Monitoring Tests Logging" name="Actuator endpoints are accessible" time="0.001">
-    </testcase>
-  </testsuite>
-  <testsuite name="Database Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:38:23" time="0.112" tests="12">
+  <testsuite name="Database Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:54:50" time="0.104" tests="12">
     <testcase classname="Database Tests MongoDB" name="MongoDB connection is successful" time="0.004">
     </testcase>
-    <testcase classname="Database Tests MongoDB" name="Users collection exists and is accessible" time="0.009">
+    <testcase classname="Database Tests MongoDB" name="Users collection exists and is accessible" time="0.007">
     </testcase>
     <testcase classname="Database Tests MongoDB" name="Products collection exists and is accessible" time="0.001">
     </testcase>
@@ -149,22 +119,22 @@
     </testcase>
     <testcase classname="Database Tests MongoDB" name="Products collection contains documents" time="0.001">
     </testcase>
-    <testcase classname="Database Tests MongoDB" name="Can perform CRUD operations on MongoDB" time="0.005">
+    <testcase classname="Database Tests MongoDB" name="Can perform CRUD operations on MongoDB" time="0.006">
     </testcase>
-    <testcase classname="Database Tests ClickHouse" name="ClickHouse is responsive" time="0.004">
+    <testcase classname="Database Tests ClickHouse" name="ClickHouse is responsive" time="0.002">
     </testcase>
-    <testcase classname="Database Tests ClickHouse" name="ClickHouse can execute queries" time="0.002">
+    <testcase classname="Database Tests ClickHouse" name="ClickHouse can execute queries" time="0.003">
     </testcase>
     <testcase classname="Database Tests ClickHouse" name="user_events table exists" time="0.002">
     </testcase>
-    <testcase classname="Database Tests ClickHouse" name="product_events table exists" time="0.002">
+    <testcase classname="Database Tests ClickHouse" name="product_events table exists" time="0.001">
     </testcase>
     <testcase classname="Database Tests ClickHouse" name="Can query user_events table" time="0.003">
     </testcase>
     <testcase classname="Database Tests ClickHouse" name="Can query product_events table" time="0.003">
     </testcase>
   </testsuite>
-  <testsuite name="Backend API Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:38:23" time="0.087" tests="14">
+  <testsuite name="Backend API Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:54:50" time="0.089" tests="14">
     <testcase classname="Backend API Tests Health &amp; Availability" name="Backend service is accessible" time="0.005">
     </testcase>
     <testcase classname="Backend API Tests Health &amp; Availability" name="Health check returns UP status" time="0.002">
@@ -173,19 +143,19 @@
     </testcase>
     <testcase classname="Backend API Tests Users API" name="GET /api/users returns array" time="0.003">
     </testcase>
-    <testcase classname="Backend API Tests Users API" name="POST /api/users creates a new user" time="0.004">
+    <testcase classname="Backend API Tests Users API" name="POST /api/users creates a new user" time="0.005">
     </testcase>
-    <testcase classname="Backend API Tests Users API" name="GET /api/users/:id returns specific user" time="0.005">
+    <testcase classname="Backend API Tests Users API" name="GET /api/users/:id returns specific user" time="0.006">
     </testcase>
-    <testcase classname="Backend API Tests Users API" name="GET /api/users/:id returns 404 for non-existent user" time="0.018">
+    <testcase classname="Backend API Tests Users API" name="GET /api/users/:id returns 404 for non-existent user" time="0.019">
     </testcase>
     <testcase classname="Backend API Tests Products API" name="GET /api/products returns array" time="0.004">
     </testcase>
-    <testcase classname="Backend API Tests Products API" name="POST /api/products creates a new product" time="0.004">
+    <testcase classname="Backend API Tests Products API" name="POST /api/products creates a new product" time="0.003">
     </testcase>
     <testcase classname="Backend API Tests Products API" name="GET /api/products/:id returns specific product" time="0.005">
     </testcase>
-    <testcase classname="Backend API Tests Products API" name="PUT /api/products/:id updates a product" time="0.005">
+    <testcase classname="Backend API Tests Products API" name="PUT /api/products/:id updates a product" time="0.007">
     </testcase>
     <testcase classname="Backend API Tests Products API" name="DELETE /api/products/:id removes a product" time="0.008">
     </testcase>
@@ -194,12 +164,64 @@
     <testcase classname="Backend API Tests API Error Handling" name="POST /api/products with invalid data returns 400" time="0.002">
     </testcase>
   </testsuite>
-  <testsuite name="Frontend Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:38:23" time="0.046" tests="25">
-    <testcase classname="Frontend Tests Availability" name="Frontend is accessible" time="0.004">
+  <testsuite name="Metrics &amp; Monitoring Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:54:50" time="0.094" tests="14">
+    <testcase classname="Metrics &amp; Monitoring Tests Grafana" name="Grafana is accessible" time="0.002">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Grafana" name="Grafana health check returns OK" time="0.002">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Grafana" name="Grafana datasources are configured" time="0.006">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Grafana" name="Grafana UI is accessible" time="0.013">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="Actuator metrics endpoint is available" time="0.002">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="Prometheus metrics endpoint is available" time="0.004">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="JVM metrics are exposed" time="0.004">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="HTTP metrics are exposed" time="0.01">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Backend Metrics" name="Specific metric can be queried" time="0.002">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Health Endpoints" name="Liveness probe endpoint works" time="0.023">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Health Endpoints" name="Readiness probe endpoint works" time="0.003">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Health Endpoints" name="Health details are available" time="0.001">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Logging" name="Loggers endpoint is available or returns error" time="0.002">
+    </testcase>
+    <testcase classname="Metrics &amp; Monitoring Tests Logging" name="Actuator endpoints are accessible" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="Infrastructure Health Checks" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:54:50" time="0.055" tests="10">
+    <testcase classname="Infrastructure Health Checks Docker Environment" name="Docker daemon is accessible" time="0.012">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Docker Environment" name="Required containers are running" time="0.002">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="MongoDB container is running" time="0.002">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="ClickHouse container is running" time="0.001">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="Kafka container is running" time="0.001">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="Backend Application container is running" time="0.001">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="Frontend Application container is running" time="0.001">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="Jaeger container is running" time="0.001">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Container Health Status" name="OpenTelemetry Collector container is running" time="0.001">
+    </testcase>
+    <testcase classname="Infrastructure Health Checks Network Connectivity" name="Docker network exists" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Frontend Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:54:50" time="0.052" tests="25">
+    <testcase classname="Frontend Tests Availability" name="Frontend is accessible" time="0.003">
     </testcase>
     <testcase classname="Frontend Tests Availability" name="Frontend serves HTML content" time="0.001">
     </testcase>
-    <testcase classname="Frontend Tests Availability" name="Frontend contains app root element" time="0.002">
+    <testcase classname="Frontend Tests Availability" name="Frontend contains app root element" time="0.001">
     </testcase>
     <testcase classname="Frontend Tests Static Assets" name="JavaScript bundle is served" time="0.001">
     </testcase>
@@ -207,33 +229,33 @@
     </testcase>
     <testcase classname="Frontend Tests Application Content" name="Frontend contains ShopTrack branding" time="0.001">
     </testcase>
-    <testcase classname="Frontend Tests Application Content" name="Frontend contains app-root element" time="0.001">
+    <testcase classname="Frontend Tests Application Content" name="Frontend contains app-root element" time="0.002">
     </testcase>
     <testcase classname="Frontend Tests SSR Health" name="Server-side rendering returns complete HTML" time="0.001">
     </testcase>
     <testcase classname="Frontend Tests Shopping App Pages" name="Home page loads with hero section" time="0.001">
     </testcase>
-    <testcase classname="Frontend Tests Shopping App Pages" name="Login page is accessible" time="0.001">
+    <testcase classname="Frontend Tests Shopping App Pages" name="Login page is accessible" time="0.002">
     </testcase>
     <testcase classname="Frontend Tests Shopping App Pages" name="Register page is accessible" time="0.001">
     </testcase>
-    <testcase classname="Frontend Tests Shopping App Pages" name="Marketplace page is accessible" time="0.001">
+    <testcase classname="Frontend Tests Shopping App Pages" name="Marketplace page is accessible" time="0.002">
     </testcase>
     <testcase classname="Frontend Tests Shopping App Pages" name="My Shop (Sell) page is accessible" time="0.001">
     </testcase>
     <testcase classname="Frontend Tests Shopping App Pages" name="Admin dashboard page is accessible" time="0.001">
     </testcase>
-    <testcase classname="Frontend Tests Shopping App Pages" name="Profiles page is accessible" time="0.001">
+    <testcase classname="Frontend Tests Shopping App Pages" name="Profiles page is accessible" time="0.002">
     </testcase>
     <testcase classname="Frontend Tests Navigation Elements" name="Navigation contains Marketplace link" time="0.001">
     </testcase>
-    <testcase classname="Frontend Tests Navigation Elements" name="Navigation contains Login button" time="0.001">
+    <testcase classname="Frontend Tests Navigation Elements" name="Navigation contains Login button" time="0.002">
     </testcase>
     <testcase classname="Frontend Tests Navigation Elements" name="Navigation contains Register button" time="0.002">
     </testcase>
     <testcase classname="Frontend Tests Navigation Elements" name="Footer contains copyright information" time="0.001">
     </testcase>
-    <testcase classname="Frontend Tests Page Content Validation" name="Login page contains form elements" time="0.001">
+    <testcase classname="Frontend Tests Page Content Validation" name="Login page contains form elements" time="0.002">
     </testcase>
     <testcase classname="Frontend Tests Page Content Validation" name="Register page contains registration form" time="0.001">
     </testcase>
@@ -243,29 +265,7 @@
     </testcase>
     <testcase classname="Frontend Tests Page Content Validation" name="Admin page contains admin dashboard elements" time="0.001">
     </testcase>
-    <testcase classname="Frontend Tests Page Content Validation" name="Profiles page contains profiling elements" time="0.001">
-    </testcase>
-  </testsuite>
-  <testsuite name="Infrastructure Health Checks" errors="0" failures="0" skipped="0" timestamp="2025-12-25T20:38:23" time="0.054" tests="10">
-    <testcase classname="Infrastructure Health Checks Docker Environment" name="Docker daemon is accessible" time="0.012">
-    </testcase>
-    <testcase classname="Infrastructure Health Checks Docker Environment" name="Required containers are running" time="0.002">
-    </testcase>
-    <testcase classname="Infrastructure Health Checks Container Health Status" name="MongoDB container is running" time="0.001">
-    </testcase>
-    <testcase classname="Infrastructure Health Checks Container Health Status" name="ClickHouse container is running" time="0.001">
-    </testcase>
-    <testcase classname="Infrastructure Health Checks Container Health Status" name="Kafka container is running" time="0.001">
-    </testcase>
-    <testcase classname="Infrastructure Health Checks Container Health Status" name="Backend Application container is running" time="0.001">
-    </testcase>
-    <testcase classname="Infrastructure Health Checks Container Health Status" name="Frontend Application container is running" time="0.002">
-    </testcase>
-    <testcase classname="Infrastructure Health Checks Container Health Status" name="Jaeger container is running" time="0.001">
-    </testcase>
-    <testcase classname="Infrastructure Health Checks Container Health Status" name="OpenTelemetry Collector container is running" time="0.001">
-    </testcase>
-    <testcase classname="Infrastructure Health Checks Network Connectivity" name="Docker network exists" time="0.001">
+    <testcase classname="Frontend Tests Page Content Validation" name="Profiles page contains profiling elements" time="0.002">
     </testcase>
   </testsuite>
 </testsuites>
