@@ -26,37 +26,44 @@ Before(async function () {
     this.navigation = new NavigationComponent(this.driver);
 });
 
+async function cleanupUsers(testData, dbHelper) {
+    if (!testData?.createdUsers) return;
+
+    for (const user of testData.createdUsers) {
+        try {
+            if (user.id) {
+                await dbHelper.deleteUser(user.id);
+            }
+        } catch (error) {
+            console.warn(`Failed to cleanup user ${user.id}:`, error.message);
+        }
+    }
+}
+
+async function cleanupProducts(testData, dbHelper) {
+    if (!testData?.createdProducts) return;
+
+    for (const product of testData.createdProducts) {
+        try {
+            if (product.id) {
+                await dbHelper.deleteProduct(product.id);
+            }
+        } catch (error) {
+            console.warn(`Failed to cleanup product ${product.id}:`, error.message);
+        }
+    }
+}
+
 After(async function (scenario) {
     // Take screenshot on failure
     if (scenario.result.status === 'failed') {
-        const screenshotName = `${scenario.pickle.name.replace(/\s+/g, '_')}_${Date.now()}`;
+        const screenshotName = `${scenario.pickle.name.replaceAll(/\s+/g, '_')}_${Date.now()}`;
         await webDriverManager.takeScreenshot(screenshotName);
     }
 
     // Clean up test data if created during the scenario
-    if (this.testData && this.testData.createdUsers) {
-        for (const user of this.testData.createdUsers) {
-            try {
-                if (user.id) {
-                    await this.dbHelper.deleteUser(user.id);
-                }
-            } catch (error) {
-                // Ignore cleanup errors
-            }
-        }
-    }
-
-    if (this.testData && this.testData.createdProducts) {
-        for (const product of this.testData.createdProducts) {
-            try {
-                if (product.id) {
-                    await this.dbHelper.deleteProduct(product.id);
-                }
-            } catch (error) {
-                // Ignore cleanup errors
-            }
-        }
-    }
+    await cleanupUsers(this.testData, this.dbHelper);
+    await cleanupProducts(this.testData, this.dbHelper);
 
     // Don't quit driver here to reuse between scenarios
     // It will be quit at the end of all scenarios

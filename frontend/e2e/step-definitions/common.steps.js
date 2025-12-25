@@ -161,6 +161,7 @@ Then('I should see a {string} button', async function (buttonText) {
             // Go back
             await this.driver.navigate().back();
         } catch (error) {
+            console.log(`Failed to find or click button: ${error.message}`);
             isVisible = false;
         }
     } else if (url.includes('/products') && buttonText.includes('Add')) {
@@ -169,6 +170,7 @@ Then('I should see a {string} button', async function (buttonText) {
             isVisible = true;
             await this.driver.navigate().back();
         } catch (error) {
+            console.log(`Failed to find or click button: ${error.message}`);
             isVisible = false;
         }
     }
@@ -187,6 +189,7 @@ Then('I should see an {string} button', async function (buttonText) {
             isVisible = true;
             await this.driver.navigate().back();
         } catch (error) {
+            console.log(`Failed to find or click button: ${error.message}`);
             isVisible = false;
         }
     }

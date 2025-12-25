@@ -25,7 +25,7 @@ Given('there are products in the database:', async function (dataTable) {
     for (const [name, price] of rows) {
         await dbHelper.createProduct({
             name,
-            price: parseFloat(price),
+            price: Number.parseFloat(price),
             description: `Test product: ${name}`
         });
     }
@@ -49,7 +49,7 @@ Given('I have created a user with email {string}', async function (email) {
 Given('there is a product {string} with price {string} in the database', async function (name, price) {
     const product = await dbHelper.createProduct({
         name: name,
-        price: parseFloat(price),
+        price: Number.parseFloat(price),
         description: `Test product: ${name}`
     });
 
@@ -72,7 +72,7 @@ Given('I create a user with email {string}', async function (email) {
 Given('I create a product with name {string}', async function (name) {
     const product = await dbHelper.createProduct({
         name: name,
-        price: 10.00,
+        price: 10,
         description: `Test product: ${name}`
     });
 
@@ -102,7 +102,7 @@ Then('the product {string} should exist in the database', async function (name) 
 Then('the product {string} should have price {string}', async function (name, expectedPrice) {
     const product = await dbHelper.getProductByName(name);
     expect(product).to.not.be.null;
-    expect(parseFloat(product.price)).to.equal(parseFloat(expectedPrice));
+    expect(Number.parseFloat(product.price)).to.equal(Number.parseFloat(expectedPrice));
 });
 
 Then('the displayed users count should match database count', async function () {
@@ -146,5 +146,5 @@ Then('the product {string} should have price {string} in the database', async fu
     await new Promise(resolve => setTimeout(resolve, 1000));
     const product = await dbHelper.getProductByName(name);
     expect(product).to.not.be.null;
-    expect(parseFloat(product.price)).to.equal(parseFloat(expectedPrice));
+    expect(Number.parseFloat(product.price)).to.equal(Number.parseFloat(expectedPrice));
 });

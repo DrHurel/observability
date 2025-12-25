@@ -2,9 +2,9 @@ const { Builder } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 
 class WebDriverManager {
-    constructor() {
-        this.driver = null;
-    }
+    driver = null;
+
+
 
     async getDriver() {
         if (!this.driver) {
@@ -48,8 +48,8 @@ class WebDriverManager {
     async takeScreenshot(filename) {
         if (this.driver) {
             const screenshot = await this.driver.takeScreenshot();
-            const fs = require('fs');
-            const path = require('path');
+            const fs = require('node:fs');
+            const path = require('node:path');
 
             const screenshotDir = path.join(__dirname, '../screenshots');
             if (!fs.existsSync(screenshotDir)) {

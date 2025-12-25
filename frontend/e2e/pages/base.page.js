@@ -52,6 +52,7 @@ class BasePage {
             const element = await this.findElement(locator);
             return await element.isDisplayed();
         } catch (error) {
+            console.log(`Element not found or not displayed: ${error.message}`);
             return false;
         }
     }
