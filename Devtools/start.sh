@@ -1,8 +1,12 @@
 #!/bin/bash
 
+GIT_ROOT=$(git rev-parse --show-toplevel)
+
+
 echo "Starting Observability Application..."
 echo "======================================"
 
+pushd $GIT_ROOT/docker
 # Check if Docker is running
 if ! docker info > /dev/null 2>&1; then
     echo "Error: Docker is not running. Please start Docker first."
@@ -48,3 +52,5 @@ echo "To view logs: docker-compose logs -f"
 echo "To view frontend logs: docker-compose logs -f frontend"
 echo "To stop: docker-compose down"
 echo "======================================"
+
+popd
