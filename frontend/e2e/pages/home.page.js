@@ -5,21 +5,23 @@ class HomePage extends BasePage {
     constructor(driver) {
         super(driver);
 
-        // Locators
+        // Locators - Updated for ShopTrack
         this.locators = {
             heroTitle: By.css('.hero h1'),
             subtitle: By.css('.hero .subtitle'),
             featureCards: By.css('.feature-card'),
-            userManagementCard: By.xpath('//h2[contains(text(), "User Management")]/ancestor::div[@class="feature-card"]'),
-            productManagementCard: By.xpath('//h2[contains(text(), "Product Management")]/ancestor::div[@class="feature-card"]'),
-            monitoringCard: By.xpath('//h2[contains(text(), "Monitoring")]/ancestor::div[@class="feature-card"]'),
-            viewUsersButton: By.xpath('//a[contains(text(), "View Users")]'),
-            createUserButton: By.xpath('//a[contains(text(), "Create User")]'),
-            viewProductsButton: By.xpath('//a[contains(text(), "View Products")]'),
-            addProductButton: By.xpath('//a[contains(text(), "Add Product")]'),
+            browseCard: By.xpath('//h2[contains(text(), "Browse")]/ancestor::div[contains(@class, "feature-card")]'),
+            sellCard: By.xpath('//h2[contains(text(), "Sell")]/ancestor::div[contains(@class, "feature-card")]'),
+            profilingCard: By.xpath('//h2[contains(text(), "User Profiling")]/ancestor::div[contains(@class, "feature-card")]'),
+            analyticsCard: By.xpath('//h2[contains(text(), "Analytics")]/ancestor::div[contains(@class, "feature-card")]'),
+            goToMarketplaceButton: By.xpath('//a[contains(text(), "Go to Marketplace")]'),
+            startSellingButton: By.xpath('//a[contains(text(), "Start Selling")]'),
+            viewProfilesButton: By.xpath('//a[contains(text(), "View Profiles")]'),
             openGrafanaButton: By.xpath('//a[contains(text(), "Open Grafana")]'),
+            getStartedButton: By.xpath('//a[contains(text(), "Get Started")]'),
+            signInButton: By.xpath('//a[contains(text(), "Sign In")]'),
             techTags: By.css('.tech-tags .tag'),
-            apiEndpoints: By.css('.api-section'),
+            statsBar: By.css('.stats-bar'),
             footer: By.css('.footer')
         };
     }
@@ -43,31 +45,36 @@ class HomePage extends BasePage {
 
     async isFeatureCardVisible(cardName) {
         let locator;
-        if (cardName === 'User Management') {
-            locator = this.locators.userManagementCard;
-        } else if (cardName === 'Product Management') {
-            locator = this.locators.productManagementCard;
-        } else if (cardName === 'Monitoring') {
-            locator = this.locators.monitoringCard;
+        if (cardName === 'Browse & Buy' || cardName === 'Browse') {
+            locator = this.locators.browseCard;
+        } else if (cardName === 'Sell Your Items' || cardName === 'Sell') {
+            locator = this.locators.sellCard;
+        } else if (cardName === 'User Profiling' || cardName === 'Profiling') {
+            locator = this.locators.profilingCard;
+        } else if (cardName === 'Analytics & Monitoring' || cardName === 'Analytics') {
+            locator = this.locators.analyticsCard;
+        } else {
+            // Generic search
+            locator = By.xpath(`//h2[contains(text(), "${cardName}")]/ancestor::div[contains(@class, "feature-card")]`);
         }
 
         return await this.isDisplayed(locator);
     }
 
-    async clickViewUsers() {
-        await this.click(this.locators.viewUsersButton);
+    async clickGoToMarketplace() {
+        await this.click(this.locators.goToMarketplaceButton);
     }
 
-    async clickCreateUser() {
-        await this.click(this.locators.createUserButton);
+    async clickStartSelling() {
+        await this.click(this.locators.startSellingButton);
     }
 
-    async clickViewProducts() {
-        await this.click(this.locators.viewProductsButton);
+    async clickViewProfiles() {
+        await this.click(this.locators.viewProfilesButton);
     }
 
-    async clickAddProduct() {
-        await this.click(this.locators.addProductButton);
+    async clickGetStarted() {
+        await this.click(this.locators.getStartedButton);
     }
 
     async clickOpenGrafana() {

@@ -6,18 +6,19 @@ class ProductListPage extends BasePage {
         super(driver);
 
         this.locators = {
-            pageTitle: By.css('.header h2'),
-            createButton: By.css('a[href="/products/create"]'),
+            pageTitle: By.css('.shop-header h2, .header h2, h1'),
+            createButton: By.css('a[href="/sell"]'),
             productCards: By.css('.product-card'),
-            emptyState: By.css('.empty-state'),
+            emptyState: By.css('.empty-state, .no-products'),
             loading: By.css('.loading'),
             error: By.css('.error'),
-            success: By.css('.success')
+            success: By.css('.success'),
+            shopGrid: By.css('.shop-grid')
         };
     }
 
     async open() {
-        await this.navigate('/products');
+        await this.navigate('/shop');
     }
 
     async getPageTitle() {
@@ -110,6 +111,50 @@ class ProductListPage extends BasePage {
 
         details.name = productName;
         return details;
+    }
+
+    async clickFirstProduct() {
+        const firstCard = By.css('.product-card:first-child h3');
+        await this.click(firstCard);
+    }
+
+    async clickProductByName(productName) {
+        const locator = By.xpath(`//div[@class="product-card"]//h3[contains(text(), "${productName}")]`);
+        await this.click(locator);
+    }
+
+    async getAllProductCards() {
+        return await this.findElements(this.locators.productCards);
+    }
+
+    async searchProducts(searchTerm) {
+        const searchInput = By.css('input[type="search"], input[placeholder*="search" i], .search-input');
+        try {
+            await this.type(searchInput, searchTerm);
+            await this.driver.sleep(500);
+        } catch (error) {
+            console.log('Search input not found, trying alternative method');
+        }
+    }
+
+    async filterByCategory(category) {
+        const categoryFilter = By.xpath(`//select[contains(@class, 'category')]|//button[contains(text(), "${category}")]`);
+        try {
+            await this.click(categoryFilter);
+        } catch (error) {
+            console.log('Category filter not found');
+        }
+    }
+
+    async sortBy(sortOption) {
+        const sortDropdown = By.css('select[name="sort"], .sort-dropdown');
+        try {
+            await this.click(sortDropdown);
+            const option = By.xpath(`//option[contains(text(), "${sortOption}")]`);
+            await this.click(option);
+        } catch (error) {
+            console.log('Sort dropdown not found');
+        }
     }
 }
 

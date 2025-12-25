@@ -9,9 +9,10 @@ class NavigationComponent extends BasePage {
             navbar: By.css('.navbar'),
             navBrand: By.css('.nav-brand'),
             navLinks: By.css('.nav-links'),
-            homeLink: By.xpath('//a[contains(text(), "Home") and contains(@class, "")]'),
-            usersLink: By.xpath('//a[contains(text(), "Users") and @routerLink="/users"]'),
-            productsLink: By.xpath('//a[contains(text(), "Products") and @routerLink="/products"]'),
+            homeLink: By.xpath('//a[contains(text(), "Home")]'),
+            marketplaceLink: By.xpath('//a[contains(text(), "Marketplace")]'),
+            loginBtn: By.css('.btn-login'),
+            registerBtn: By.css('.btn-register'),
             activeLink: By.css('.nav-links a.active')
         };
     }
@@ -28,12 +29,21 @@ class NavigationComponent extends BasePage {
         await this.click(this.locators.homeLink);
     }
 
-    async clickUsers() {
-        await this.click(this.locators.usersLink);
+    async clickMarketplace() {
+        await this.click(this.locators.marketplaceLink);
     }
 
-    async clickProducts() {
-        await this.click(this.locators.productsLink);
+    async goToProducts() {
+        await this.click(this.locators.marketplaceLink);
+        await this.driver.sleep(500);
+    }
+
+    async clickLogin() {
+        await this.click(this.locators.loginBtn);
+    }
+
+    async clickRegister() {
+        await this.click(this.locators.registerBtn);
     }
 
     async clickNavLink(linkText) {

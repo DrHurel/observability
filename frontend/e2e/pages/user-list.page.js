@@ -6,10 +6,10 @@ class UserListPage extends BasePage {
         super(driver);
 
         this.locators = {
-            pageTitle: By.css('.header h2'),
-            createButton: By.css('a[href="/users/create"]'),
-            userCards: By.css('.user-card'),
-            emptyState: By.css('.empty-state'),
+            pageTitle: By.css('.profiles-header h2, .header h2, h1'),
+            createButton: By.css('a[href="/register"]'),
+            userCards: By.css('.profile-card, .user-card'),
+            emptyState: By.css('.empty-state, .no-profiles'),
             loading: By.css('.loading'),
             error: By.css('.error'),
             navBar: By.css('.navbar'),
@@ -18,7 +18,7 @@ class UserListPage extends BasePage {
     }
 
     async open() {
-        await this.navigate('/users');
+        await this.navigate('/profiles');
     }
 
     async getPageTitle() {
