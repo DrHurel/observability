@@ -57,4 +57,20 @@ public class KafkaConfig {
                 .replicas(1)
                 .build();
     }
+
+    @Bean
+    public NewTopic userProfilesTopic() {
+        return TopicBuilder.name("user-profiles")
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic actionLogsTopic() {
+        return TopicBuilder.name("action-logs")
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
 }
