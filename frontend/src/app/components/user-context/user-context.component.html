@@ -1,0 +1,79 @@
+<div class="user-context-container">
+    <button class="user-button" (click)="toggleDropdown()">
+        @if (isLoggedIn()) {
+        <span class="avatar">{{ userName().charAt(0).toUpperCase() }}</span>
+        <span class="user-name">{{ userName() }}</span>
+        } @else {
+        <span class="avatar anonymous">?</span>
+        <span class="user-name">Anonymous</span>
+        }
+        <span class="dropdown-arrow">▼</span>
+    </button>
+
+    @if (showDropdown()) {
+    <div class="dropdown-menu">
+        <div class="dropdown-header">
+            <span class="header-title">🎭 Switch User Context</span>
+            <p class="header-subtitle">Select a user to test profiling</p>
+        </div>
+
+        @if (!showCustomInput()) {
+        <!-- Current User Info -->
+        @if (isLoggedIn()) {
+        <div class="current-user-info">
+            <span class="label">Currently:</span>
+            <span class="email">{{ currentUser()?.email }}</span>
+        </div>
+        }
+
+        <!-- Preset Users -->
+        <div class="preset-users">
+            @for (user of presetUsers; track user.email) {
+            <button class="preset-user-btn" [class.active]="currentUser()?.email === user.email"
+                (click)="selectPresetUser(user)">
+                <span class="preset-avatar">{{ user.name.charAt(0) }}</span>
+                <span class="preset-info">
+                    <span class="preset-name">{{ user.name }}</span>
+                    <span class="preset-email">{{ user.email }}</span>
+                </span>
+                @if (currentUser()?.email === user.email) {
+                <span class="check">✓</span>
+                }
+            </button>
+            }
+        </div>
+
+        <div class="dropdown-divider"></div>
+
+        <!-- Actions -->
+        <button class="action-btn" (click)="showCustomForm()">
+            ✏️ Enter Custom Email
+        </button>
+
+        @if (isLoggedIn()) {
+        <button class="action-btn logout" (click)="logout()">
+            🚪 Switch to Anonymous
+        </button>
+        }
+        } @else {
+        <!-- Custom Email Form -->
+        <div class="custom-form">
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" placeholder="user@example.com" [ngModel]="customEmail()"
+                    (ngModelChange)="customEmail.set($event)">
+            </div>
+            <div class="form-group">
+                <label>Name (optional)</label>
+                <input type="text" placeholder="Your Name" [ngModel]="customName()"
+                    (ngModelChange)="customName.set($event)">
+            </div>
+            <div class="form-actions">
+                <button class="btn-cancel" (click)="showCustomInput.set(false)">Cancel</button>
+                <button class="btn-submit" (click)="submitCustomUser()">Set User</button>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</div>

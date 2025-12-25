@@ -1,0 +1,149 @@
+<div class="profile-list-container">
+    <div class="header">
+        <h1>👤 User Profiles</h1>
+        <p class="subtitle">Behavioral analysis of users based on their actions</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card" (click)="setFilter('ALL')" [class.active]="filterType() === 'ALL'">
+            <span class="stat-number">{{ stats().total }}</span>
+            <span class="stat-label">Total Profiles</span>
+        </div>
+        <div class="stat-card read" (click)="setFilter('READ_HEAVY')" [class.active]="filterType() === 'READ_HEAVY'">
+            <span class="stat-icon">📖</span>
+            <span class="stat-number">{{ stats().readHeavy }}</span>
+            <span class="stat-label">Read Heavy</span>
+        </div>
+        <div class="stat-card write" (click)="setFilter('WRITE_HEAVY')" [class.active]="filterType() === 'WRITE_HEAVY'">
+            <span class="stat-icon">✏️</span>
+            <span class="stat-number">{{ stats().writeHeavy }}</span>
+            <span class="stat-label">Write Heavy</span>
+        </div>
+        <div class="stat-card expensive" (click)="setFilter('EXPENSIVE_SEEKER')"
+            [class.active]="filterType() === 'EXPENSIVE_SEEKER'">
+            <span class="stat-icon">💰</span>
+            <span class="stat-number">{{ stats().expensiveSeeker }}</span>
+            <span class="stat-label">Expensive Seeker</span>
+        </div>
+        <div class="stat-card balanced" (click)="setFilter('BALANCED')" [class.active]="filterType() === 'BALANCED'">
+            <span class="stat-icon">⚖️</span>
+            <span class="stat-number">{{ stats().balanced }}</span>
+            <span class="stat-label">Balanced</span>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+        <button class="btn btn-primary" (click)="loadProfiles()">
+            🔄 Refresh Profiles
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    @if (loading()) {
+    <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading profiles...</p>
+    </div>
+    }
+
+    <!-- Error State -->
+    @if (error()) {
+    <div class="error-message">
+        <p>{{ error() }}</p>
+        <button class="btn btn-secondary" (click)="loadProfiles()">Try Again</button>
+    </div>
+    }
+
+    <!-- Profiles Table -->
+    @if (!loading() && !error()) {
+    <div class="profiles-table-container">
+        <table class="profiles-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Profile Type</th>
+                    <th>Reads</th>
+                    <th>Writes</th>
+                    <th>Expensive Searches</th>
+                    <th>Avg Price</th>
+                    <th>Last Activity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (profile of filteredProfiles(); track profile.id) {
+                <tr (click)="selectProfile(profile)" [class.selected]="selectedProfile()?.id === profile.id"
+                    [class.current-user]="isCurrentUser(profile)">
+                    <td class="user-cell">
+                        <span class="user-email">{{ profile.userEmail || profile.userId || 'Anonymous' }}</span>
+                        @if (profile.userName) {
+                        <span class="user-name">{{ profile.userName }}</span>
+                        }
+                        @if (isCurrentUser(profile)) {
+                        <span class="you-badge">YOU</span>
+                        }
+                    </td>
+                    <td>
+                        <span class="badge" [ngClass]="getProfileTypeClass(profile.profileType)">
+                            {{ getProfileTypeIcon(profile.profileType) }} {{ profile.profileType }}
+                        </span>
+                    </td>
+                    <td class="number-cell">{{ profile.readOperations }}</td>
+                    <td class="number-cell">{{ profile.writeOperations }}</td>
+                    <td class="number-cell">{{ profile.expensiveProductSearches }}</td>
+                    <td class="number-cell">{{ formatPrice(profile.averageProductPriceViewed) }}</td>
+                    <td class="date-cell">{{ formatDate(profile.lastActivityAt) }}</td>
+                </tr>
+
+                <!-- Expanded Details -->
+                @if (selectedProfile()?.id === profile.id) {
+                <tr class="details-row">
+                    <td colspan="7">
+                        <div class="profile-details">
+                            <h3>Recent Actions (Last {{ profile.recentActions?.length || 0 }})</h3>
+
+                            @if (profile.recentActions && profile.recentActions.length > 0) {
+                            <div class="actions-list">
+                                @for (action of profile.recentActions.slice(-10).reverse(); track $index) {
+                                <div class="action-item">
+                                    <span class="action-type"
+                                        [ngClass]="action.actionType === 'READ' ? 'read' : 'write'">
+                                        {{ action.actionType }}
+                                    </span>
+                                    <span class="action-op">{{ action.operationType }}</span>
+                                    <span class="action-entity">{{ action.targetEntity }}</span>
+                                    @if (action.productPrice) {
+                                    <span class="action-price">{{ formatPrice(action.productPrice) }}</span>
+                                    }
+                                    <span class="action-time">{{ formatDate(action.timestamp) }}</span>
+                                </div>
+                                }
+                            </div>
+                            } @else {
+                            <p class="no-actions">No recent actions recorded</p>
+                            }
+
+                            <div class="profile-meta">
+                                <p><strong>Created:</strong> {{ formatDate(profile.createdAt) }}</p>
+                                <p><strong>Max Price Viewed:</strong> {{ formatPrice(profile.maxProductPriceViewed) }}
+                                </p>
+                                <p><strong>Expensive Threshold:</strong> {{ formatPrice(profile.expensiveThreshold) }}
+                                </p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                }
+                } @empty {
+                <tr>
+                    <td colspan="7" class="empty-state">
+                        <p>No profiles found. Start browsing to create your profile!</p>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>
