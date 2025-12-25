@@ -71,8 +71,10 @@ public class SpoonProjectProcessor implements ProjectProcessor {
     /**
      * Create the InjectLogProcessor with the given configuration.
      * Can be overridden for testing or customization.
+     * 
+     * Uses ActionAwareCodeInjector by default to enable action recording.
      */
     protected InjectLogProcessor createProcessor(LoggingRulesConfig config) {
-        return new InjectLogProcessor(config, new DefaultCodeInjector());
+        return new InjectLogProcessor(config, new ActionAwareCodeInjector(true));
     }
 }

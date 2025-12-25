@@ -41,7 +41,7 @@ public class InjectLogProcessor extends AbstractProcessor<CtMethod<?>> {
      * Create an InjectLogProcessor with default configuration and code injector.
      */
     public InjectLogProcessor() {
-        this(loadDefaultConfig(), new DefaultCodeInjector());
+        this(loadDefaultConfig(), createDefaultCodeInjector());
     }
 
     /**
@@ -51,7 +51,7 @@ public class InjectLogProcessor extends AbstractProcessor<CtMethod<?>> {
      * @param config the logging rules configuration
      */
     public InjectLogProcessor(LoggingRulesConfig config) {
-        this(config, new DefaultCodeInjector());
+        this(config, createDefaultCodeInjector());
     }
 
     /**
@@ -63,7 +63,20 @@ public class InjectLogProcessor extends AbstractProcessor<CtMethod<?>> {
      */
     public InjectLogProcessor(LoggingRulesConfig config, CodeInjector codeInjector) {
         this.config = config != null ? config : new LoggingRulesConfig();
-        this.codeInjector = codeInjector != null ? codeInjector : new DefaultCodeInjector();
+        this.codeInjector = codeInjector != null ? codeInjector : createDefaultCodeInjector();
+    }
+
+    private static CodeInjector createDefaultCodeInjector() {
+        // Check if action recording is enabled via system property or environment
+        String actionRecording = System.getProperty("injectlog.action.recording",
+                System.getenv().getOrDefault("INJECTLOG_ACTION_RECORDING", "true"));
+        boolean enabled = "true".equalsIgnoreCase(actionRecording);
+
+        if (enabled) {
+            return new ActionAwareCodeInjector(true);
+        } else {
+            return new DefaultCodeInjector();
+        }
     }
 
     private static LoggingRulesConfig loadDefaultConfig() {
