@@ -8,11 +8,11 @@ Feature: Application Navigation and UI
 
   Scenario: Home page displays all features
     When I navigate to the home page
-    Then I should see the hero section with title "Observability Application"
-    And I should see 3 feature cards
-    And I should see the feature card for "User Management"
-    And I should see the feature card for "Product Management"
-    And I should see the feature card for "Monitoring"
+    Then I should see the hero section with title "ShopTrack"
+    And I should see 4 feature cards
+    And I should see the feature card for "Browse & Buy"
+    And I should see the feature card for "Sell Your Items"
+    And I should see the feature card for "User Profiling"
 
   Scenario: Navigation bar is always visible
     When I navigate to the home page
@@ -23,27 +23,24 @@ Feature: Application Navigation and UI
   Scenario: Active navigation link highlighting
     When I navigate to the home page
     Then the "Home" navigation link should be active
-    When I click on the "Users" navigation link
-    Then the "Users" navigation link should be active
+    When I click on the "Marketplace" navigation link
+    Then the "Marketplace" navigation link should be active
     And the "Home" navigation link should not be active
-    When I click on the "Products" navigation link
-    Then the "Products" navigation link should be active
-    And the "Users" navigation link should not be active
 
   Scenario: Navigate using feature cards
     When I navigate to the home page
-    And I click on "View Users" in the User Management card
-    Then I should be on the users page
+    And I click on "Go to Marketplace" in the Browse & Buy card
+    Then I should be on the marketplace page
     When I navigate to the home page
-    And I click on "View Products" in the Product Management card
-    Then I should be on the products page
+    And I click on "View Profiles" in the User Profiling card
+    Then I should be on the profiles page
 
   Scenario: Footer is displayed on all pages
     When I navigate to the home page
-    Then I should see the footer with text "© 2025 Observability Application"
-    When I navigate to the users page
+    Then I should see the footer with text "© 2025 ShopTrack"
+    When I navigate to the marketplace page
     Then I should see the footer
-    When I navigate to the products page
+    When I navigate to the profiles page
     Then I should see the footer
 
   Scenario: Responsive navigation menu
@@ -53,13 +50,13 @@ Feature: Application Navigation and UI
 
   Scenario: External links to monitoring tools
     When I navigate to the home page
-    And I click on "Open Grafana" in the Monitoring card
+    And I click on "Open Grafana" in the Analytics card
     Then a new tab should open with Grafana URL
 
-  Scenario: Quick navigation from home to create pages
+  Scenario: Quick navigation from home to sell page
     When I navigate to the home page
-    And I click on "Create User" in the User Management card
-    Then I should be on the user creation page
+    And I click on "Start Selling" in the Sell Your Items card
+    Then I should be on the sell page
     When I navigate to the home page
-    And I click on "Add Product" in the Product Management card
-    Then I should be on the product creation page
+    And I click on "Get Started" button
+    Then I should be on the register page
