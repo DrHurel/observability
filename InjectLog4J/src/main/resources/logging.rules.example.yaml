@@ -1,0 +1,60 @@
+# InjectLog4J Example Configuration
+# Place this file as 'logging.rules.yaml' in your project's src/main/resources
+#
+# IMPORTANT: This library uses the Log4J2 configuration from YOUR project.
+# Make sure your project has a log4j2.xml file configured.
+# The 'log4jLogger' property references loggers defined in your log4j2.xml.
+
+loggers:
+  # Business logger - sends to Kafka
+  business:
+    output: kafka
+    format: "{{time}} [{{class}}.{{method}}] {{message}}"
+    bootstrapServers: localhost:9092
+    topic: business-logs
+  
+  # System logger - uses Log4J2 from your project's log4j2.xml
+  # The 'log4jLogger' should match a logger name in your log4j2.xml
+  system:
+    output: terminal
+    log4jLogger: fr.umontpellier.system  # References logger in your log4j2.xml
+    format: "{{time}} [{{class}}.{{method}}] {{message}}"
+  
+  # Audit logger - uses specific Log4J2 logger for audit trail
+  audit:
+    output: terminal
+    log4jLogger: fr.umontpellier.audit  # References audit logger in your log4j2.xml
+    format: "{{time}} AUDIT [{{class}}.{{method}}] {{message}} args={{args}}"
+
+  # Debug logger - uses project's debug logger configuration
+  debug:
+    output: log4j2
+    log4jLogger: fr.umontpellier.debug
+    format: "{{time}} DEBUG {{class}}.{{method}} - {{message}} | value={{value}}"
+  # Example: Log all methods in a specific class
+  - target: com.example.service.UserService.*
+    criticality: INFO
+    why: [OnEntry, OnReturn, OnException]
+    message: "User service operation"
+    logger: business
+
+  # Example: Log specific method with custom message
+  - target: com.example.controller.PaymentController.processPayment
+    criticality: INFO
+    why: [OnReturn, OnException]
+    message: "Payment processed with result: {{value}}"
+    logger: audit
+
+  # Example: Log exceptions only
+  - target: com.example.repository.*
+    criticality: ERROR
+    why: [OnException]
+    message: "Repository error: {{exception}}"
+    logger: system
+
+  # Example: Using annotation id
+  - target: payment.process
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Processing payment {{value}}"
+    logger: business

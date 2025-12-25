@@ -1,0 +1,9 @@
+# Default InjectLog4J Configuration
+# This file should be overridden by the project using this library
+
+loggers:
+  system:
+    output: terminal
+    format: "{{time}} {{message}}"
+
+rules: []
