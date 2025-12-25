@@ -1,0 +1,73 @@
+# InjectLog4J Configuration for Observability Project
+# This file defines logging rules that replace handwritten logs
+# Target format: package.Class.method
+
+loggers:
+  # Service layer logger - uses the application logger from log4j2.xml
+  service:
+    output: terminal
+    log4jLogger: fr.umontpellier.observability
+    format: "{{time}} [{{class}}.{{method}}] {{message}}"
+
+  # Error logger for exceptions
+  error:
+    output: terminal
+    log4jLogger: fr.umontpellier.observability
+    format: "{{time}} ERROR [{{class}}.{{method}}] {{message}} - {{exception}}"
+
+rules:
+  # ProductService rules
+  - target: fr.umontpellier.observability.service.ProductService.getAllProducts
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching all products"
+    logger: service
+
+  - target: fr.umontpellier.observability.service.ProductService.getProductById
+    criticality: INFO
+    why: [OnEntry, OnException]
+    message: "Fetching product by id: {{args}}"
+    logger: service
+
+  - target: fr.umontpellier.observability.service.ProductService.addProduct
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Adding new product - result: {{value}}"
+    logger: service
+
+  - target: fr.umontpellier.observability.service.ProductService.deleteProduct
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Deleting product with id from args: {{args}}"
+    logger: service
+
+  - target: fr.umontpellier.observability.service.ProductService.updateProduct
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Updating product - result: {{value}}"
+    logger: service
+
+  # UserService rules
+  - target: fr.umontpellier.observability.service.UserService.createUser
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Creating new user - result: {{value}}"
+    logger: service
+
+  - target: fr.umontpellier.observability.service.UserService.getAllUsers
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching all users"
+    logger: service
+
+  - target: fr.umontpellier.observability.service.UserService.getUserById
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching user by id: {{args}}"
+    logger: service
+
+  - target: fr.umontpellier.observability.service.UserService.getUserByEmail
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching user by email: {{args}}"
+    logger: service
