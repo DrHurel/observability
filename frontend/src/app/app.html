@@ -3,8 +3,22 @@
     <a routerLink="/" class="nav-brand">{{ title() }}</a>
     <div class="nav-links">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-      <a routerLink="/users" routerLinkActive="active">Users</a>
-      <a routerLink="/products" routerLinkActive="active">Products</a>
+      <a routerLink="/shop" routerLinkActive="active">Marketplace</a>
+      @if (userContextService.isLoggedIn()) {
+      <a routerLink="/sell" routerLinkActive="active">My Shop</a>
+      @if (userContextService.isAdmin()) {
+      <a routerLink="/admin" routerLinkActive="active">Admin</a>
+      }
+      <a routerLink="/profiles" routerLinkActive="active">Profiles</a>
+      }
+    </div>
+    <div class="nav-auth">
+      @if (userContextService.isLoggedIn()) {
+      <app-user-context></app-user-context>
+      } @else {
+      <a routerLink="/login" class="btn-login">Login</a>
+      <a routerLink="/register" class="btn-register">Register</a>
+      }
     </div>
   </div>
 </nav>
@@ -14,5 +28,5 @@
 </main>
 
 <footer class="footer">
-  <p>&copy; 2025 Observability Application - Built with Angular & Spring Boot</p>
+  <p>&copy; 2025 ShopTrack - User Profiling with LPS Pattern</p>
 </footer>
