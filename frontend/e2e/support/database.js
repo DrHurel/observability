@@ -75,7 +75,13 @@ class DatabaseHelper {
      */
     async createUser(userData) {
         try {
-            const response = await axios.post(`${this.baseUrl}/api/users`, userData);
+            // Ensure required fields are present
+            const userPayload = {
+                name: userData.name || 'Test User',
+                email: userData.email,
+                password: userData.password || 'TestPassword123!'
+            };
+            const response = await axios.post(`${this.baseUrl}/api/users`, userPayload);
             return response.data;
         } catch (error) {
             console.error('Failed to create user:', error.message);
@@ -88,7 +94,17 @@ class DatabaseHelper {
      */
     async createProduct(productData) {
         try {
-            const response = await axios.post(`${this.baseUrl}/api/products`, productData);
+            // Ensure required fields are present
+            const futureDate = new Date();
+            futureDate.setFullYear(futureDate.getFullYear() + 1);
+
+            const productPayload = {
+                name: productData.name,
+                description: productData.description || 'Test product description',
+                price: parseFloat(productData.price) || 99.99,
+                expirationDate: productData.expirationDate || futureDate.toISOString().split('T')[0]
+            };
+            const response = await axios.post(`${this.baseUrl}/api/products`, productPayload);
             return response.data;
         } catch (error) {
             console.error('Failed to create product:', error.message);
