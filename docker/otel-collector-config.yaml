@@ -11,6 +11,10 @@ receivers:
             - "http://localhost:80"
             - "*"
 
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+
 processors:
   batch:
     timeout: 10s
@@ -54,7 +58,7 @@ service:
       processors: [memory_limiter, batch]
       exporters: [prometheus, logging]
 
-  extensions: []
+  extensions: [health_check]
 
   telemetry:
     logs:

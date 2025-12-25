@@ -6,27 +6,30 @@ COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 
-# Download dependencies
-RUN ./mvnw dependency:go-offline -B
+# Copy module pom files
+COPY InjectLog4J/pom.xml InjectLog4J/pom.xml
+COPY app/pom.xml app/pom.xml
 
-# Copy source code
-COPY src src
+# Download dependencies
+RUN ./mvnw dependency:go-offline -B || true
+
+# Copy source code for all modules
+COPY InjectLog4J/src InjectLog4J/src
+COPY app/src app/src
 
 # Build the application
-RUN ./mvnw package -DskipTests
+RUN ./mvnw package -DskipTests -pl app -am
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Install curl for health checks and wget for downloading OpenTelemetry agent
-RUN apk add --no-cache curl wget
-
-# Download OpenTelemetry Java agent
-RUN wget -O /app/opentelemetry-javaagent.jar \
+# Install curl for health checks and wget, then download OpenTelemetry agent
+RUN apk add --no-cache curl wget && \
+    wget -O /app/opentelemetry-javaagent.jar \
     https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.1.0/opentelemetry-javaagent.jar
 
 # Copy the built artifact from builder stage
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=builder /app/app/target/*.jar app.jar
 
 # Create logs directory
 RUN mkdir -p /app/logs

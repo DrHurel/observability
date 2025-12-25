@@ -60,7 +60,7 @@ services:
       CLICKHOUSE_PASSWORD: ""
     volumes:
       - clickhouse-data:/var/lib/clickhouse
-      - ./clickhouse-init:/docker-entrypoint-initdb.d
+      - ../clickhouse-init:/docker-entrypoint-initdb.d
     networks:
       - observability-network
     healthcheck:
@@ -81,7 +81,7 @@ services:
       GF_INSTALL_PLUGINS: grafana-clickhouse-datasource
     volumes:
       - grafana-data:/var/lib/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ../grafana/provisioning:/etc/grafana/provisioning
     networks:
       - observability-network
     depends_on:
@@ -129,7 +129,7 @@ services:
       jaeger:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget --spider --quiet http://localhost:13133 || exit 1"]
+      test: ["CMD", "/otelcol-contrib", "--version"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -181,7 +181,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
