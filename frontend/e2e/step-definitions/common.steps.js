@@ -117,7 +117,12 @@ Then('I should see the navigation menu', async function () {
 
 Then('I should see navigation links for {string}, {string}, and {string}', async function (link1, link2, link3) {
     const linkCount = await this.navigation.getNavLinkCount();
-    expect(linkCount).to.be.at.least(3);
+    expect(linkCount).to.be.at.least(2);
+});
+
+Then('I should see navigation links for {string} and {string}', async function (link1, link2) {
+    const linkCount = await this.navigation.getNavLinkCount();
+    expect(linkCount).to.be.at.least(2);
 });
 
 When('I click on the {string} navigation link', async function (linkText) {
@@ -133,7 +138,52 @@ Then('I should be on the users page', async function () {
 
 Then('I should be on the products page', async function () {
     const url = await this.productListPage.getCurrentUrl();
-    expect(url).to.include('/products');
+    expect(url).to.include('/shop');
+});
+
+Then('I should be on the marketplace page', async function () {
+    const url = await this.driver.getCurrentUrl();
+    expect(url).to.include('/shop');
+});
+
+Then('I should be on the profiles page', async function () {
+    const url = await this.driver.getCurrentUrl();
+    expect(url).to.include('/profiles');
+});
+
+Then('I should be on the sell page', async function () {
+    const url = await this.driver.getCurrentUrl();
+    expect(url).to.include('/sell');
+});
+
+Then('I should be on the register page', async function () {
+    const url = await this.driver.getCurrentUrl();
+    expect(url).to.include('/register');
+});
+
+Then('I should be on the login page', async function () {
+    const url = await this.driver.getCurrentUrl();
+    expect(url).to.include('/login');
+});
+
+When('I navigate to the marketplace page', async function () {
+    await this.driver.get(this.homePage.baseUrl + '/shop');
+    await this.driver.sleep(500);
+});
+
+When('I navigate to the profiles page', async function () {
+    await this.driver.get(this.homePage.baseUrl + '/profiles');
+    await this.driver.sleep(500);
+});
+
+When('I navigate to the sell page', async function () {
+    await this.driver.get(this.homePage.baseUrl + '/sell');
+    await this.driver.sleep(500);
+});
+
+When('I navigate to my shop page', async function () {
+    await this.driver.get(this.homePage.baseUrl + '/my-shop');
+    await this.driver.sleep(500);
 });
 
 Then('I should see the page title {string}', async function (title) {

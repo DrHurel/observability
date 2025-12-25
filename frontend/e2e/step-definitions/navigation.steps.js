@@ -1,6 +1,26 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
 const { expect } = require('chai');
 
+Given('I am on the products page', async function () {
+    await this.navigation.goToProducts();
+    await this.driver.sleep(500);
+});
+
+Given('I am on the marketplace page', async function () {
+    await this.navigation.goToProducts();
+    await this.driver.sleep(500);
+});
+
+Given('I am on the users page', async function () {
+    await this.navigation.navigate('/profiles');
+    await this.driver.sleep(500);
+});
+
+Given('I am on the profiles page', async function () {
+    await this.navigation.navigate('/profiles');
+    await this.driver.sleep(500);
+});
+
 Then('I should see the navigation bar', async function () {
     const isVisible = await this.navigation.isVisible();
     expect(isVisible).to.be.true;
@@ -41,27 +61,28 @@ Then('I should see the feature card for {string}', async function (cardName) {
     expect(isVisible).to.be.true;
 });
 
-When('I click on {string} in the User Management card', async function (linkText) {
-    if (linkText === 'View Users') {
-        await this.homePage.clickViewUsers();
-    } else if (linkText === 'Create User') {
-        await this.homePage.clickCreateUser();
+When('I click on {string} in the Browse card', async function (linkText) {
+    if (linkText === 'Go to Marketplace') {
+        await this.homePage.clickGoToMarketplace();
     }
-
     await this.driver.sleep(1000);
 });
 
-When('I click on {string} in the Product Management card', async function (linkText) {
-    if (linkText === 'View Products') {
-        await this.homePage.clickViewProducts();
-    } else if (linkText === 'Add Product') {
-        await this.homePage.clickAddProduct();
+When('I click on {string} in the Sell card', async function (linkText) {
+    if (linkText === 'Start Selling') {
+        await this.homePage.clickStartSelling();
     }
-
     await this.driver.sleep(1000);
 });
 
-When('I click on {string} in the Monitoring card', async function (linkText) {
+When('I click on {string} in the Profiling card', async function (linkText) {
+    if (linkText === 'View Profiles') {
+        await this.homePage.clickViewProfiles();
+    }
+    await this.driver.sleep(1000);
+});
+
+When('I click on {string} in the Analytics card', async function (linkText) {
     if (linkText === 'Open Grafana') {
         await this.homePage.clickOpenGrafana();
     }
