@@ -6,7 +6,6 @@ import fr.umontpellier.observability.exception.ProductNotFoundException;
 import fr.umontpellier.observability.model.Product;
 import fr.umontpellier.observability.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +18,6 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Transactional
-@Log4j2
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -93,7 +91,7 @@ public class ProductService {
             event.put("timestamp", System.currentTimeMillis());
             kafkaTemplate.send(PRODUCT_TOPIC, objectMapper.writeValueAsString(event));
         } catch (Exception e) {
-            log.warn("Failed to publish product event: {}", e.getMessage());
+            // Exception logging handled by InjectLog4J via logging.rules.yaml
         }
     }
 }

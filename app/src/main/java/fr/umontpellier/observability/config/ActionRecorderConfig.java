@@ -6,7 +6,6 @@ import fr.umontpellier.observability.service.UserProfileService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -18,14 +17,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @RequiredArgsConstructor
-@Log4j2
 public class ActionRecorderConfig {
 
     private final UserProfileService userProfileService;
 
     @PostConstruct
     public void init() {
-        log.info("Initializing ActionRecorder integration with UserProfileService");
         ActionInjector.initialize(new ProfileServiceActionRecorder(userProfileService));
     }
 

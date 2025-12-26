@@ -11,7 +11,6 @@ import fr.umontpellier.observability.model.UserProfile.ProfileType;
 import fr.umontpellier.observability.repository.UserProfileRepository;
 import fr.umontpellier.observability.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +35,6 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-@Log4j2
 @Transactional
 public class UserProfileService {
 
@@ -53,7 +51,6 @@ public class UserProfileService {
      */
     public void recordAction(UserAction action) {
         if (action == null) {
-            log.warn("Attempted to record null action");
             return;
         }
 
@@ -61,7 +58,6 @@ public class UserProfileService {
         String userEmail = action.getUserEmail();
 
         if (userId == null && userEmail == null) {
-            log.debug("Action without user context, skipping profile update");
             return;
         }
 
@@ -100,10 +96,6 @@ public class UserProfileService {
 
         // Publish profile update event
         publishProfileUpdate(profile);
-
-        log.info("Updated profile for user {}: {}",
-                userEmail != null ? userEmail : userId,
-                profile.getSummary());
     }
 
     /**
@@ -299,10 +291,9 @@ public class UserProfileService {
                 recordAction(action);
                 processed++;
             } catch (Exception e) {
-                log.error("Failed to process action: {}", e.getMessage());
+                // Exception logging handled by InjectLog4J via logging.rules.yaml
             }
         }
-        log.info("Processed {} actions from logs", processed);
         return processed;
     }
 
@@ -317,10 +308,9 @@ public class UserProfileService {
                 recordAction(action);
                 processed++;
             } catch (Exception e) {
-                log.error("Failed to process action: {}", e.getMessage());
+                // Exception logging handled by InjectLog4J via logging.rules.yaml
             }
         }
-        log.info("Processed {} actions from {} log lines", processed, logLines.size());
         return processed;
     }
 
@@ -334,7 +324,6 @@ public class UserProfileService {
             profile.setUpdatedAt(LocalDateTime.now());
             userProfileRepository.save(profile);
         }
-        log.info("Recalculated {} profiles", profiles.size());
     }
 
     /**
@@ -406,7 +395,7 @@ public class UserProfileService {
                     profile.getProfileType());
             kafkaTemplate.send(PROFILE_TOPIC, message);
         } catch (Exception e) {
-            log.debug("Failed to publish profile update to Kafka: {}", e.getMessage());
+            // Exception logging handled by InjectLog4J via logging.rules.yaml
         }
     }
 
@@ -415,7 +404,6 @@ public class UserProfileService {
      */
     public void deleteProfile(String userId) {
         userProfileRepository.deleteByUserId(userId);
-        log.info("Deleted profile for user: {}", userId);
     }
 
     /**
@@ -423,6 +411,5 @@ public class UserProfileService {
      */
     public void deleteAllProfiles() {
         userProfileRepository.deleteAll();
-        log.info("Deleted all profiles");
     }
 }

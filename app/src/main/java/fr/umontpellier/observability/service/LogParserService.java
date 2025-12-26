@@ -8,7 +8,6 @@ import fr.umontpellier.observability.model.UserAction.ActionType;
 import fr.umontpellier.observability.model.UserAction.EntityType;
 import fr.umontpellier.observability.model.UserAction.OperationType;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,7 +32,6 @@ import java.util.regex.Pattern;
  */
 @Service
 @RequiredArgsConstructor
-@Log4j2
 public class LogParserService {
 
     private final ObjectMapper objectMapper;
@@ -152,7 +150,7 @@ public class LogParserService {
             return Optional.of(builder.build());
 
         } catch (JsonProcessingException e) {
-            log.trace("Failed to parse as JSON: {}", e.getMessage());
+            // Exception logging handled by InjectLog4J via logging.rules.yaml
             return Optional.empty();
         }
     }

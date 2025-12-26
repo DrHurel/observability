@@ -4,7 +4,6 @@ import fr.umontpellier.observability.model.UserProfile;
 import fr.umontpellier.observability.model.UserProfile.ProfileType;
 import fr.umontpellier.observability.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/profiles")
 @RequiredArgsConstructor
-@Log4j2
 public class ProfileController {
 
     private final UserProfileService userProfileService;
@@ -35,7 +33,6 @@ public class ProfileController {
      */
     @GetMapping
     public ResponseEntity<List<UserProfile>> getAllProfiles() {
-        log.info("Fetching all user profiles");
         List<UserProfile> profiles = userProfileService.getAllProfiles();
         return ResponseEntity.ok(profiles);
     }
@@ -45,7 +42,6 @@ public class ProfileController {
      */
     @GetMapping("/user/{userId}")
     public ResponseEntity<UserProfile> getProfileByUserId(@PathVariable String userId) {
-        log.info("Fetching profile for user ID: {}", userId);
         return userProfileService.getProfileByUserId(userId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -56,7 +52,6 @@ public class ProfileController {
      */
     @GetMapping("/email/{email}")
     public ResponseEntity<UserProfile> getProfileByEmail(@PathVariable String email) {
-        log.info("Fetching profile for email: {}", email);
         return userProfileService.getProfileByEmail(email)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -67,13 +62,11 @@ public class ProfileController {
      */
     @GetMapping("/type/{type}")
     public ResponseEntity<List<UserProfile>> getProfilesByType(@PathVariable String type) {
-        log.info("Fetching profiles of type: {}", type);
         try {
             ProfileType profileType = ProfileType.valueOf(type.toUpperCase());
             List<UserProfile> profiles = userProfileService.getProfilesByType(profileType);
             return ResponseEntity.ok(profiles);
         } catch (IllegalArgumentException e) {
-            log.error("Invalid profile type: {}", type);
             return ResponseEntity.badRequest().build();
         }
     }
@@ -83,7 +76,6 @@ public class ProfileController {
      */
     @GetMapping("/read-heavy")
     public ResponseEntity<List<UserProfile>> getReadHeavyUsers() {
-        log.info("Fetching read-heavy user profiles");
         List<UserProfile> profiles = userProfileService.getReadHeavyUsers();
         return ResponseEntity.ok(profiles);
     }
@@ -93,7 +85,6 @@ public class ProfileController {
      */
     @GetMapping("/write-heavy")
     public ResponseEntity<List<UserProfile>> getWriteHeavyUsers() {
-        log.info("Fetching write-heavy user profiles");
         List<UserProfile> profiles = userProfileService.getWriteHeavyUsers();
         return ResponseEntity.ok(profiles);
     }
@@ -103,7 +94,6 @@ public class ProfileController {
      */
     @GetMapping("/expensive-seekers")
     public ResponseEntity<List<UserProfile>> getExpensiveSeekers() {
-        log.info("Fetching expensive product seeker profiles");
         List<UserProfile> profiles = userProfileService.getExpensiveProductSeekers();
         return ResponseEntity.ok(profiles);
     }
@@ -113,7 +103,6 @@ public class ProfileController {
      */
     @GetMapping("/statistics")
     public ResponseEntity<Map<String, Object>> getStatistics() {
-        log.info("Fetching profile statistics");
         Map<String, Object> stats = userProfileService.getProfileStatistics();
         return ResponseEntity.ok(stats);
     }
@@ -123,7 +112,6 @@ public class ProfileController {
      */
     @GetMapping("/export")
     public ResponseEntity<String> exportProfiles() {
-        log.info("Exporting all profiles as JSON");
         String json = userProfileService.exportProfilesAsJson();
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=user_profiles.json")
@@ -136,7 +124,6 @@ public class ProfileController {
      */
     @PostMapping("/process-logs")
     public ResponseEntity<Map<String, Object>> processLogs(@RequestBody String logContent) {
-        log.info("Processing logs to update profiles");
         int processed = userProfileService.processLogs(logContent);
         return ResponseEntity.ok(Map.of(
                 "status", "success",
@@ -148,7 +135,6 @@ public class ProfileController {
      */
     @PostMapping("/process-log-lines")
     public ResponseEntity<Map<String, Object>> processLogLines(@RequestBody List<String> logLines) {
-        log.info("Processing {} log lines", logLines.size());
         int processed = userProfileService.processLogLines(logLines);
         return ResponseEntity.ok(Map.of(
                 "status", "success",
@@ -161,7 +147,6 @@ public class ProfileController {
      */
     @PostMapping("/recalculate")
     public ResponseEntity<Map<String, String>> recalculateProfiles() {
-        log.info("Recalculating all user profiles");
         userProfileService.recalculateAllProfiles();
         return ResponseEntity.ok(Map.of(
                 "status", "success",
@@ -173,7 +158,6 @@ public class ProfileController {
      */
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<Void> deleteProfile(@PathVariable String userId) {
-        log.info("Deleting profile for user: {}", userId);
         userProfileService.deleteProfile(userId);
         return ResponseEntity.noContent().build();
     }
@@ -183,7 +167,6 @@ public class ProfileController {
      */
     @DeleteMapping("/all")
     public ResponseEntity<Map<String, String>> deleteAllProfiles() {
-        log.info("Deleting all user profiles");
         userProfileService.deleteAllProfiles();
         return ResponseEntity.ok(Map.of(
                 "status", "success",
