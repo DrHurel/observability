@@ -119,7 +119,67 @@ public class LogConsumerService {
         }
     }
 
+    private void ensureTablesExist() {
+        try {
+            // Create observability database
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "CREATE DATABASE IF NOT EXISTS observability")) {
+                stmt.execute();
+                log.info("Ensured observability database exists");
+            }
+
+            // Create user_events table
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "CREATE TABLE IF NOT EXISTS observability.user_events (" +
+                            "id UInt64, " +
+                            "timestamp DateTime DEFAULT now(), " +
+                            "event_type String, " +
+                            "user_id String, " +
+                            "user_name String, " +
+                            "user_email String, " +
+                            "details String" +
+                            ") ENGINE = MergeTree() ORDER BY timestamp")) {
+                stmt.execute();
+                log.info("Ensured observability.user_events table exists");
+            }
+
+            // Create product_events table
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "CREATE TABLE IF NOT EXISTS observability.product_events (" +
+                            "id UInt64, " +
+                            "timestamp DateTime DEFAULT now(), " +
+                            "event_type String, " +
+                            "product_id String, " +
+                            "product_name String, " +
+                            "product_price Float64, " +
+                            "details String" +
+                            ") ENGINE = MergeTree() ORDER BY timestamp")) {
+                stmt.execute();
+                log.info("Ensured observability.product_events table exists");
+            }
+
+            // Create application_logs table in default database
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "CREATE TABLE IF NOT EXISTS default.application_logs (" +
+                            "timestamp DateTime DEFAULT now(), " +
+                            "level String, " +
+                            "logger String, " +
+                            "message String, " +
+                            "thread String" +
+                            ") ENGINE = MergeTree() ORDER BY timestamp")) {
+                stmt.execute();
+                log.info("Ensured default.application_logs table exists");
+            }
+
+        } catch (SQLException e) {
+            log.error("Failed to create ClickHouse tables: {}", e.getMessage());
+        }
+    }
+
     private void initializeCounters() {
+        // First ensure tables exist
+        ensureTablesExist();
+
         try (PreparedStatement stmt = connection.prepareStatement("SELECT max(id) FROM observability.user_events")) {
             var rs = stmt.executeQuery();
             if (rs.next()) {
@@ -232,13 +292,14 @@ public class LogConsumerService {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, userEventIdCounter.getAndIncrement());
             stmt.setString(2, eventType);
-            stmt.setLong(3, parseId(userId));
-            stmt.setString(4, userName);
-            stmt.setString(5, userEmail);
+            stmt.setString(3, userId != null ? userId : "");
+            stmt.setString(4, userName != null ? userName : "");
+            stmt.setString(5, userEmail != null ? userEmail : "");
             stmt.setString(6, "");
             stmt.executeUpdate();
+            log.debug("Inserted user event: type={}, userId={}", eventType, userId);
         } catch (SQLException e) {
-            log.debug("Failed to insert user event: {}", e.getMessage());
+            log.warn("Failed to insert user event: {}", e.getMessage());
         }
     }
 
@@ -252,13 +313,14 @@ public class LogConsumerService {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, productEventIdCounter.getAndIncrement());
             stmt.setString(2, eventType);
-            stmt.setLong(3, parseId(productId));
-            stmt.setString(4, productName);
+            stmt.setString(3, productId != null ? productId : "");
+            stmt.setString(4, productName != null ? productName : "");
             stmt.setDouble(5, price);
             stmt.setString(6, "");
             stmt.executeUpdate();
+            log.debug("Inserted product event: type={}, productId={}", eventType, productId);
         } catch (SQLException e) {
-            log.debug("Failed to insert product event: {}", e.getMessage());
+            log.warn("Failed to insert product event: {}", e.getMessage());
         }
     }
 

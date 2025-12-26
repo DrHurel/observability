@@ -2,8 +2,8 @@
 CREATE DATABASE IF NOT EXISTS observability;
 
 -- Create application_logs table in default database
-CREATE TABLE IF NOT EXISTS application_logs (
-    timestamp DateTime,
+CREATE TABLE IF NOT EXISTS default.application_logs (
+    timestamp DateTime DEFAULT now(),
     level String,
     logger String,
     message String,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS observability.user_events (
     id UInt64,
     timestamp DateTime DEFAULT now(),
     event_type String,
-    user_id UInt64,
+    user_id String,
     user_name String,
     user_email String,
     details String
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS observability.product_events (
     id UInt64,
     timestamp DateTime DEFAULT now(),
     event_type String,
-    product_id UInt64,
+    product_id String,
     product_name String,
     product_price Float64,
     details String
