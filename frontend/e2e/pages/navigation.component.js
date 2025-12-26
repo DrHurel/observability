@@ -35,7 +35,7 @@ class NavigationComponent extends BasePage {
 
     async goToProducts() {
         await this.click(this.locators.marketplaceLink);
-        await this.driver.sleep(500);
+        await this.driver.sleep(100);
     }
 
     async clickLogin() {
@@ -73,6 +73,10 @@ class NavigationComponent extends BasePage {
         const navbar = await this.findElement(this.locators.navbar);
         const position = await navbar.getCssValue('position');
         return position === 'sticky' || position === 'fixed';
+    }
+
+    async isVisible() {
+        return await this.isNavbarVisible();
     }
 }
 

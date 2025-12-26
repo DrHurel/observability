@@ -63,6 +63,14 @@ class UserListPage extends BasePage {
     async getErrorMessage() {
         return await this.getText(this.locators.error);
     }
+
+    async getAllUserRows() {
+        return await this.findElements(this.locators.userCards);
+    }
+
+    async getAllUserCards() {
+        return await this.findElements(this.locators.userCards);
+    }
 }
 
 module.exports = UserListPage;

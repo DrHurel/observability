@@ -18,8 +18,12 @@ class ProductFormPage extends BasePage {
         };
     }
 
+    async open() {
+        await this.navigate('/sell');
+    }
+
     async openCreate() {
-        await this.navigate('/products/create');
+        await this.navigate('/sell');
     }
 
     async openEdit(productId) {

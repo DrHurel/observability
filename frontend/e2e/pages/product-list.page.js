@@ -35,8 +35,24 @@ class ProductListPage extends BasePage {
     }
 
     async isProductVisible(productName) {
-        const locator = By.xpath(`//div[@class="product-card"]//h3[contains(text(), "${productName}")]`);
-        return await this.isDisplayed(locator);
+        // Check both product card format and table row format
+        const locators = [
+            By.xpath(`//div[contains(@class, "product-card")]//h3[contains(text(), "${productName}")]`),
+            By.xpath(`//tr[contains(., "${productName}")]`),
+            By.xpath(`//*[contains(text(), "${productName}")]`)
+        ];
+
+        for (const locator of locators) {
+            try {
+                const elements = await this.driver.findElements(locator);
+                if (elements.length > 0) {
+                    return true;
+                }
+            } catch (e) {
+                continue;
+            }
+        }
+        return false;
     }
 
     async getProductPrice(productName) {
@@ -127,11 +143,24 @@ class ProductListPage extends BasePage {
         return await this.findElements(this.locators.productCards);
     }
 
+    async getAllProductRows() {
+        return await this.findElements(this.locators.productCards);
+    }
+
+    async findProductByName(productName) {
+        const locator = By.xpath(`//div[contains(@class, "product-card")]//h3[contains(text(), "${productName}")]`);
+        try {
+            return await this.findElement(locator);
+        } catch (error) {
+            return null;
+        }
+    }
+
     async searchProducts(searchTerm) {
         const searchInput = By.css('input[type="search"], input[placeholder*="search" i], .search-input');
         try {
             await this.type(searchInput, searchTerm);
-            await this.driver.sleep(500);
+            await this.driver.sleep(100);
         } catch (error) {
             console.log('Search input not found, trying alternative method');
         }

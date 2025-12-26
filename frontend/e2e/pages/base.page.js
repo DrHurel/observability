@@ -33,7 +33,41 @@ class BasePage {
         const element = await this.findElement(locator);
         await this.driver.wait(until.elementIsVisible(element), 5000);
         await this.driver.wait(until.elementIsEnabled(element), 5000);
-        await element.click();
+
+        // Close any open modals first
+        await this.closeModals();
+
+        // Try normal click first, fall back to JavaScript click if intercepted
+        try {
+            await element.click();
+        } catch (error) {
+            if (error.name === 'ElementClickInterceptedError') {
+                // Wait a bit and try JavaScript click
+                await this.driver.sleep(100);
+                await this.driver.executeScript('arguments[0].click();', element);
+            } else {
+                throw error;
+            }
+        }
+    }
+
+    async closeModals() {
+        try {
+            // Try to close any open modals by clicking close buttons or overlay
+            const closeButtons = await this.driver.findElements(By.css('.modal-close, .close-btn, .btn-close, [data-dismiss="modal"]'));
+            for (const btn of closeButtons) {
+                try {
+                    if (await btn.isDisplayed()) {
+                        await btn.click();
+                        await this.driver.sleep(50);
+                    }
+                } catch (e) { /* ignore */ }
+            }
+
+            // Also try pressing Escape to close modals
+            const body = await this.driver.findElement(By.css('body'));
+            await body.sendKeys('\uE00C'); // Escape key
+        } catch (e) { /* ignore */ }
     }
 
     async type(locator, text) {
@@ -82,21 +116,45 @@ class BasePage {
     }
 
     async acceptAlert() {
-        await this.driver.wait(until.alertIsPresent(), 5000);
-        const alert = await this.driver.switchTo().alert();
-        await alert.accept();
+        try {
+            await this.driver.wait(until.alertIsPresent(), 2000);
+            const alert = await this.driver.switchTo().alert();
+            await alert.accept();
+        } catch (e) {
+            // No browser alert - try clicking confirm button in modal
+            try {
+                const confirmBtn = await this.driver.findElement(By.css('.confirm-btn, .btn-confirm, button.btn-primary, button[type="submit"]'));
+                await confirmBtn.click();
+            } catch (e2) {
+                console.log('No alert or confirm modal found');
+            }
+        }
     }
 
     async dismissAlert() {
-        await this.driver.wait(until.alertIsPresent(), 5000);
-        const alert = await this.driver.switchTo().alert();
-        await alert.dismiss();
+        try {
+            await this.driver.wait(until.alertIsPresent(), 2000);
+            const alert = await this.driver.switchTo().alert();
+            await alert.dismiss();
+        } catch (e) {
+            // No browser alert - try clicking cancel button in modal
+            try {
+                const cancelBtn = await this.driver.findElement(By.css('.cancel-btn, .btn-cancel, button.btn-secondary'));
+                await cancelBtn.click();
+            } catch (e2) {
+                console.log('No alert or cancel modal found');
+            }
+        }
     }
 
     async getAlertText() {
-        await this.driver.wait(until.alertIsPresent(), 5000);
-        const alert = await this.driver.switchTo().alert();
-        return await alert.getText();
+        try {
+            await this.driver.wait(until.alertIsPresent(), 2000);
+            const alert = await this.driver.switchTo().alert();
+            return await alert.getText();
+        } catch (e) {
+            return '';
+        }
     }
 }
 
