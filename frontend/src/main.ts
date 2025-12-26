@@ -1,10 +1,9 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
 import { App } from './app/app';
-import { initializeTracing } from './app/services/tracing.service';
 
-// Initialize OpenTelemetry tracing before bootstrapping the application
-initializeTracing();
+// Tracing is initialized via APP_INITIALIZER in app.config.ts
+// This ensures it only runs in the browser after hydration
 
 bootstrapApplication(App, appConfig)
   .catch((err) => console.error(err));
