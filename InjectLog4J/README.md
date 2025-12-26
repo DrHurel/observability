@@ -7,7 +7,9 @@ A library for automatic logging injection using [Spoon](https://spoon.gforge.inr
 - **Annotation-based**: Mark methods/classes with `@InjectLog` for automatic log injection
 - **Declarative configuration**: Define logging rules in `logging.rules.yaml`
 - **Uses project's Log4J2 config**: Integrates with your project's existing `log4j2.xml`
-- **Multiple outputs**: Support for terminal (Log4J2) and Kafka outputs
+- **Multiple outputs**: Support for terminal (Log4J2), Kafka, and file outputs
+- **Multiple file outputs**: Write to multiple log files simultaneously
+- **Logger categories**: Organize loggers into categories (system, business)
 - **Flexible triggers**: Log on method entry, return, or exception
 - **Template messages**: Use placeholders like `{{time}}`, `{{value}}`, `{{args}}`
 - **Wildcard matching**: Target multiple methods with pattern matching
@@ -77,17 +79,35 @@ public class UserService {
 Place this file in `src/main/resources/logging.rules.yaml`:
 
 ```yaml
+# Logger Categories:
+# - system: Infrastructure, configuration, and technical operations
+# - business: Business logic, user actions, and domain operations
+
 loggers:
-  business:
-    output: kafka
-    format: "{{time}} {{message}}"
-    bootstrapServers: localhost:9092
-    topic: business-logs
-  
+  # System logger - for infrastructure and technical operations
   system:
     output: terminal
-    log4jLogger: fr.umontpellier.system  # References logger from your log4j2.xml
-    format: "{{time}} [{{class}}.{{method}}] {{message}}"
+    log4jLogger: fr.umontpellier.system
+    format: "{{time}} [SYSTEM] [{{class}}.{{method}}] {{message}}"
+    category: system
+    files:
+      - path: logs/system.log
+        format: "{{time}} [{{level}}] {{message}}"
+        append: true
+        maxSize: 10MB
+        maxFiles: 5
+
+  # Business logger - for business logic and domain operations
+  business:
+    output: terminal
+    log4jLogger: fr.umontpellier.business
+    format: "{{time}} [BUSINESS] [{{class}}.{{method}}] {{message}}"
+    category: business
+    files:
+      - path: logs/business.log
+        format: "{{time}} [{{level}}] {{message}}"
+      - path: logs/all.log
+        format: "{{time}} [{{category}}] {{message}}"
 
 rules:
   - target: user.create
@@ -96,10 +116,10 @@ rules:
     message: "User created: {{value}}"
     logger: business
 
-  - target: com.example.service.*
+  - target: com.example.config.*
     criticality: INFO
-    why: [OnEntry, OnReturn, OnException]
-    message: "Service operation"
+    why: [OnEntry]
+    message: "Configuration initialized"
     logger: system
 ```
 
@@ -125,13 +145,54 @@ public class Application {
 
 | Property | Description | Required |
 |----------|-------------|----------|
-| `output` | Output type: `terminal`, `log4j2`, `console`, or `kafka` | Yes |
+| `output` | Output type: `terminal`, `log4j2`, `console`, `kafka`, or `file` | Yes |
 | `format` | Message format with placeholders | Yes |
 | `log4jLogger` | Log4J2 logger name from your project's `log4j2.xml` | No (for terminal/log4j2) |
 | `bootstrapServers` | Kafka bootstrap servers (for kafka output) | No |
 | `topic` | Kafka topic name (for kafka output) | No |
+| `category` | Logger category: `system` or `business` | No |
+| `files` | List of file output configurations (see below) | No |
 
 **Note:** For `terminal`/`log4j2`/`console` output, the `log4jLogger` property lets you specify which Log4J2 logger to use from your project's configuration. This allows you to leverage your existing appenders, log levels, and formatting.
+
+### Logger Categories
+
+Use categories to organize your loggers by purpose:
+
+- **system**: For infrastructure, configuration, and technical operations (startup, shutdown, connections, errors)
+- **business**: For business logic, user actions, and domain operations (user creation, transactions, data changes)
+
+Categories replace the old error/debug/warn distinction since criticality (log level) is defined per-rule, not per-logger.
+
+### File Outputs
+
+Each logger can write to multiple files simultaneously using the `files` array:
+
+| Property | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `path` | File path (relative to project root or absolute) | Yes | - |
+| `format` | Message format with placeholders | No | Uses logger format |
+| `append` | Append to existing file (true) or overwrite (false) | No | `true` |
+| `maxSize` | Maximum file size before rotation (e.g., `10MB`, `1GB`) | No | unlimited |
+| `maxFiles` | Maximum number of rotated files to keep | No | 5 |
+
+**Example with multiple file outputs:**
+
+```yaml
+loggers:
+  business:
+    output: terminal
+    log4jLogger: fr.umontpellier.business
+    format: "{{time}} [BUSINESS] {{message}}"
+    category: business
+    files:
+      - path: logs/business.log
+        format: "{{time}} [{{level}}] {{message}}"
+        maxSize: 10MB
+        maxFiles: 10
+      - path: logs/all-events.log
+        format: "{{time}} [{{category}}] [{{class}}.{{method}}] {{message}}"
+```
 
 ### Rules
 
@@ -154,6 +215,8 @@ public class Application {
 | `{{class}}` | Class name |
 | `{{args}}` | Method arguments |
 | `{{exception}}` | Exception details |
+| `{{level}}` | Log level (TRACE, DEBUG, INFO, WARN, ERROR) |
+| `{{category}}` | Logger category (system, business) |
 
 ## Build-Time Processing (Maven Plugin)
 
