@@ -18,6 +18,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * from the consuming project. The logger name can be specified in the
  * {@code log4jLogger} property of the logger configuration.
  * </p>
+ * 
+ * <p>
+ * Supports multiple file outputs via the {@code files} configuration property.
+ * When files are configured, a CompositeOutput is created that writes to both
+ * the primary output (terminal/kafka) and all configured files.
+ * </p>
  */
 public class LogOutputFactory {
 
@@ -51,6 +57,16 @@ public class LogOutputFactory {
         register("console", terminalProvider);
         register("log4j", terminalProvider);
         register("log4j2", terminalProvider);
+
+        // File output
+        register("file", (loggerName, config) -> {
+            if (config != null && config.hasFileOutputs()) {
+                // Use the first file config for single file output type
+                return new FileOutput(config.getFiles().get(0));
+            }
+            // Default file path based on logger name
+            return new FileOutput("logs/" + loggerName + ".log");
+        });
 
         // Kafka output
         register("kafka", (loggerName, config) -> {
@@ -125,6 +141,11 @@ public class LogOutputFactory {
      * <li>Default "InjectLog4J" logger</li>
      * </ol>
      * 
+     * <p>
+     * If the config has file outputs configured, a CompositeOutput is created
+     * that writes to both the primary output and all configured files.
+     * </p>
+     * 
      * @param loggerName the name of the logger from logging.rules.yaml
      * @param config     the logger configuration
      * @return the appropriate LogOutput instance
@@ -143,7 +164,33 @@ public class LogOutputFactory {
             return new TerminalOutput(DEFAULT_LOG4J_LOGGER);
         }
 
-        return provider.create(loggerName, config);
+        // Create the primary output
+        LogOutput primaryOutput = provider.create(loggerName, config);
+
+        // If there are file outputs configured, create a composite
+        if (config != null && config.hasFileOutputs()) {
+            CompositeOutput composite = new CompositeOutput();
+            composite.addOutput(primaryOutput);
+
+            // Add all file outputs
+            for (LoggerConfig.FileConfig fileConfig : config.getFiles()) {
+                composite.addOutput(new FileOutput(fileConfig));
+            }
+
+            return composite;
+        }
+
+        return primaryOutput;
+    }
+
+    /**
+     * Create a file output from a FileConfig.
+     * 
+     * @param fileConfig the file configuration
+     * @return the file output
+     */
+    public static LogOutput createFileOutput(LoggerConfig.FileConfig fileConfig) {
+        return new FileOutput(fileConfig);
     }
 
     private static String getOutputType(LoggerConfig config) {
