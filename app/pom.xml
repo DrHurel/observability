@@ -152,7 +152,8 @@
                         </goals>
                         <configuration>
                             <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
-                            <configFile>${project.basedir}/src/main/resources/logging.rules.yaml</configFile>
+                            <!-- Uses all *.logging.rules.yaml files from resources directory -->
+                            <resourceDirectory>${project.basedir}/src/main/resources</resourceDirectory>
                         </configuration>
                     </execution>
                 </executions>

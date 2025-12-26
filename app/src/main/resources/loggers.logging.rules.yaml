@@ -1,0 +1,33 @@
+# InjectLog4J Logger Definitions
+# This file contains the logger configurations used by all rules
+#
+# Logger Categories:
+# - system: Infrastructure, configuration, and technical operations
+# - business: Business logic, user actions, and domain operations
+
+loggers:
+  # System logger - for infrastructure, configuration, and technical operations
+  system:
+    output: terminal
+    log4jLogger: fr.umontpellier.observability.system
+    format: "{{time}} [SYSTEM] [{{class}}.{{method}}] {{message}}"
+    category: system
+    files:
+      - path: logs/system.log
+        format: "{{time}} [{{level}}] [{{class}}.{{method}}] {{message}}"
+        append: true
+        maxSize: 10MB
+        maxFiles: 5
+
+  # Business logger - for business logic, user actions, and domain operations
+  business:
+    output: terminal
+    log4jLogger: fr.umontpellier.observability.business
+    format: "{{time}} [BUSINESS] [{{class}}.{{method}}] {{message}}"
+    category: business
+    files:
+      - path: logs/business.log
+        format: "{{time}} [{{level}}] [{{class}}.{{method}}] {{message}}"
+        append: true
+        maxSize: 10MB
+        maxFiles: 5

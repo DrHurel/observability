@@ -1,0 +1,17 @@
+# System Logging Rules
+# Infrastructure: Configuration, parsing, and technical operations
+
+rules:
+  # ==================== LogParserService rules ====================
+  - target: fr.umontpellier.observability.service.LogParserService.parseAsJson
+    criticality: TRACE
+    why: [OnException]
+    message: "Failed to parse as JSON: {{exception}}"
+    logger: system
+
+  # ==================== ActionRecorderConfig rules ====================
+  - target: fr.umontpellier.observability.config.ActionRecorderConfig.init
+    criticality: INFO
+    why: [OnEntry]
+    message: "Initializing ActionRecorder integration with UserProfileService"
+    logger: system

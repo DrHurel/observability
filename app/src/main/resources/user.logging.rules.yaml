@@ -1,0 +1,33 @@
+# UserService Logging Rules
+# Business domain: User management operations
+
+rules:
+  - target: fr.umontpellier.observability.service.UserService.createUser
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Creating new user - result: {{value}}"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.UserService.getAllUsers
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching all users"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.UserService.getUserById
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching user by id: {{args}}"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.UserService.getUserByEmail
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching user by email: {{args}}"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.UserService.publishUserEvent
+    criticality: WARN
+    why: [OnException]
+    message: "Failed to publish user event: {{exception}}"
+    logger: system

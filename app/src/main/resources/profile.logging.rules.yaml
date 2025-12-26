@@ -1,0 +1,131 @@
+# Profile Logging Rules
+# Business domain: User profile management and analysis
+
+rules:
+  # ==================== UserProfileService rules ====================
+  - target: fr.umontpellier.observability.service.UserProfileService.recordAction
+    criticality: INFO
+    why: [OnReturn]
+    message: "Updated user profile"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.UserProfileService.processLogs
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Processing logs to update profiles"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.UserProfileService.processLogLines
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Processing log lines to update profiles"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.UserProfileService.recalculateAllProfiles
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Recalculating all user profiles"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.UserProfileService.deleteProfile
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Deleting profile for user: {{args}}"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.UserProfileService.deleteAllProfiles
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Deleting all profiles"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.UserProfileService.publishProfileUpdate
+    criticality: DEBUG
+    why: [OnException]
+    message: "Failed to publish profile update to Kafka: {{exception}}"
+    logger: system
+
+  # ==================== ProfileController rules ====================
+  - target: fr.umontpellier.observability.controller.ProfileController.getAllProfiles
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching all user profiles"
+    logger: business
+
+  - target: fr.umontpellier.observability.controller.ProfileController.getProfileByUserId
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching profile for user ID: {{args}}"
+    logger: business
+
+  - target: fr.umontpellier.observability.controller.ProfileController.getProfileByEmail
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching profile for email: {{args}}"
+    logger: business
+
+  - target: fr.umontpellier.observability.controller.ProfileController.getProfilesByType
+    criticality: INFO
+    why: [OnEntry, OnException]
+    message: "Fetching profiles of type: {{args}}"
+    logger: business
+
+  - target: fr.umontpellier.observability.controller.ProfileController.getReadHeavyUsers
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching read-heavy user profiles"
+    logger: business
+
+  - target: fr.umontpellier.observability.controller.ProfileController.getWriteHeavyUsers
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching write-heavy user profiles"
+    logger: business
+
+  - target: fr.umontpellier.observability.controller.ProfileController.getExpensiveSeekers
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching expensive product seeker profiles"
+    logger: business
+
+  - target: fr.umontpellier.observability.controller.ProfileController.getStatistics
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching profile statistics"
+    logger: business
+
+  - target: fr.umontpellier.observability.controller.ProfileController.exportProfiles
+    criticality: INFO
+    why: [OnEntry]
+    message: "Exporting all profiles as JSON"
+    logger: business
+
+  - target: fr.umontpellier.observability.controller.ProfileController.processLogs
+    criticality: INFO
+    why: [OnEntry]
+    message: "Processing logs to update profiles"
+    logger: business
+
+  - target: fr.umontpellier.observability.controller.ProfileController.processLogLines
+    criticality: INFO
+    why: [OnEntry]
+    message: "Processing log lines"
+    logger: business
+
+  - target: fr.umontpellier.observability.controller.ProfileController.recalculateProfiles
+    criticality: INFO
+    why: [OnEntry]
+    message: "Recalculating all user profiles"
+    logger: business
+
+  - target: fr.umontpellier.observability.controller.ProfileController.deleteProfile
+    criticality: INFO
+    why: [OnEntry]
+    message: "Deleting profile for user: {{args}}"
+    logger: business
+
+  - target: fr.umontpellier.observability.controller.ProfileController.deleteAllProfiles
+    criticality: INFO
+    why: [OnEntry]
+    message: "Deleting all user profiles"
+    logger: business

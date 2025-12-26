@@ -1,0 +1,39 @@
+# ProductService Logging Rules
+# Business domain: Product management operations
+
+rules:
+  - target: fr.umontpellier.observability.service.ProductService.getAllProducts
+    criticality: INFO
+    why: [OnEntry]
+    message: "Fetching all products"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.ProductService.getProductById
+    criticality: INFO
+    why: [OnEntry, OnException]
+    message: "Fetching product by id: {{args}}"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.ProductService.addProduct
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Adding new product - result: {{value}}"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.ProductService.deleteProduct
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Deleting product with id from args: {{args}}"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.ProductService.updateProduct
+    criticality: INFO
+    why: [OnEntry, OnReturn]
+    message: "Updating product - result: {{value}}"
+    logger: business
+
+  - target: fr.umontpellier.observability.service.ProductService.publishProductEvent
+    criticality: WARN
+    why: [OnException]
+    message: "Failed to publish product event: {{exception}}"
+    logger: system
