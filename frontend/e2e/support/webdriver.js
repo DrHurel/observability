@@ -10,26 +10,32 @@ class WebDriverManager {
         if (!this.driver) {
             const options = new chrome.Options();
 
-            // Run headless in CI or when HEADLESS env var is set
-            if (process.env.HEADLESS === 'true' || process.env.CI) {
+            // Run headless by default (set HEADLESS=false to see browser)
+            if (process.env.HEADLESS !== 'false') {
                 options.addArguments('--headless=new');
             }
 
-            // Additional Chrome options for better stability
+            // Additional Chrome options for better stability and speed
             options.addArguments('--no-sandbox');
             options.addArguments('--disable-dev-shm-usage');
             options.addArguments('--disable-gpu');
             options.addArguments('--window-size=1920,1080');
             options.addArguments('--disable-extensions');
             options.addArguments('--disable-popup-blocking');
+            options.addArguments('--disable-background-networking');
+            options.addArguments('--disable-sync');
+            options.addArguments('--disable-translate');
+            options.addArguments('--disable-infobars');
+            options.addArguments('--disable-features=TranslateUI');
+            options.addArguments('--blink-settings=imagesEnabled=false');
 
             this.driver = await new Builder()
                 .forBrowser('chrome')
                 .setChromeOptions(options)
                 .build();
 
-            // Set implicit wait
-            await this.driver.manage().setTimeouts({ implicit: 10000 });
+            // Set implicit wait (reduced for faster failures)
+            await this.driver.manage().setTimeouts({ implicit: 3000 });
 
             // Maximize window
             await this.driver.manage().window().maximize();

@@ -195,6 +195,32 @@ class DatabaseHelper {
         }
         throw new Error(`Timeout waiting for product with name: ${name}`);
     }
+
+    /**
+     * Delete a specific user by ID
+     */
+    async deleteUser(userId) {
+        try {
+            await axios.delete(`${this.baseUrl}/api/users/${userId}`);
+            return true;
+        } catch (error) {
+            console.error(`Failed to delete user ${userId}:`, error.message);
+            return false;
+        }
+    }
+
+    /**
+     * Delete a specific product by ID
+     */
+    async deleteProduct(productId) {
+        try {
+            await axios.delete(`${this.baseUrl}/api/products/${productId}`);
+            return true;
+        } catch (error) {
+            console.error(`Failed to delete product ${productId}:`, error.message);
+            return false;
+        }
+    }
 }
 
 module.exports = DatabaseHelper;

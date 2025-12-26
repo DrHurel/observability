@@ -10,8 +10,8 @@ const ProductListPage = require('../pages/product-list.page');
 const ProductFormPage = require('../pages/product-form.page');
 const NavigationComponent = require('../pages/navigation.component');
 
-// Set default timeout to 30 seconds
-setDefaultTimeout(30 * 1000);
+// Set default timeout to 15 seconds (optimized for speed)
+setDefaultTimeout(15 * 1000);
 
 Before(async function () {
     this.driver = await webDriverManager.getDriver();
