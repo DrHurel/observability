@@ -16,9 +16,9 @@ export class TracingService {
             })
         );
 
-        // Configure the OTLP exporter to send traces to OpenTelemetry Collector
+        // Configure the OTLP exporter to send traces to OpenTelemetry Collector via nginx proxy
         const otlpExporter = new OTLPTraceExporter({
-            url: 'http://localhost:4318/v1/traces',
+            url: '/v1/traces',
             headers: {},
         });
 
