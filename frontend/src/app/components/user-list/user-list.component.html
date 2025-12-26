@@ -1,0 +1,33 @@
+<div class="container">
+    <div class="header">
+        <h2>Users</h2>
+        <a routerLink="/users/create" class="btn btn-primary">Create New User</a>
+    </div>
+
+    @if (loading()) {
+    <div class="loading">Loading users...</div>
+    }
+
+    @if (error()) {
+    <div class="error">{{ error() }}</div>
+    }
+
+    @if (users().length === 0 && !loading() && !error()) {
+    <div class="empty-state">
+        <p>No users found. Create your first user!</p>
+    </div>
+    }
+
+    @if (users().length > 0) {
+    <div class="users-grid">
+        @for (user of users(); track user.id) {
+        <div class="user-card">
+            <h3>{{ user.name }}</h3>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Age:</strong> {{ user.age }}</p>
+            <p><strong>ID:</strong> {{ user.id }}</p>
+        </div>
+        }
+    </div>
+    }
+</div>

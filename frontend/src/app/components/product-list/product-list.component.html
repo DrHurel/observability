@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="header">
+        <h2>Products</h2>
+        <a routerLink="/products/create" class="btn btn-primary">Add New Product</a>
+    </div>
+
+    @if (loading()) {
+    <div class="loading">Loading products...</div>
+    }
+
+    @if (error()) {
+    <div class="error">{{ error() }}</div>
+    }
+
+    @if (successMessage()) {
+    <div class="success">{{ successMessage() }}</div>
+    }
+
+    @if (products().length === 0 && !loading() && !error()) {
+    <div class="empty-state">
+        <p>No products found. Add your first product!</p>
+    </div>
+    }
+
+    @if (products().length > 0) {
+    <div class="products-grid">
+        @for (product of products(); track product.id) {
+        <div class="product-card">
+            <h3>{{ product.name }}</h3>
+            <div class="product-info">
+                <p><strong>Price:</strong> {{ '$' + product.price }}</p>
+                <p><strong>Expires:</strong> {{ product.expirationDate }}</p>
+                <p class="product-id"><strong>ID:</strong> {{ product.id }}</p>
+            </div>
+            <div class="product-actions">
+                <a [routerLink]="['/products/edit', product.id]" class="btn btn-sm btn-secondary">Edit</a>
+                <button (click)="deleteProduct(product.id!)" class="btn btn-sm btn-danger">Delete</button>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</div>

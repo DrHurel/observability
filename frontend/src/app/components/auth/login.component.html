@@ -1,0 +1,46 @@
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>🛒 ShopObserve</h1>
+            <p>Welcome back! Please login to continue.</p>
+        </div>
+
+        <form (ngSubmit)="onLogin()" class="auth-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" [(ngModel)]="password" name="password"
+                    placeholder="Enter your password" required>
+            </div>
+
+            @if (error()) {
+            <div class="error-message">{{ error() }}</div>
+            }
+
+            <button type="submit" class="btn-primary" [disabled]="loading()">
+                @if (loading()) {
+                <span class="spinner"></span> Logging in...
+                } @else {
+                Login
+                }
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Don't have an account? <a routerLink="/register">Register here</a></p>
+        </div>
+
+        <div class="demo-users">
+            <p>Quick Login (Demo):</p>
+            <div class="demo-buttons">
+                <button (click)="quickLogin('alice@example.com', 'Alice')">Alice (Buyer)</button>
+                <button (click)="quickLogin('bob@example.com', 'Bob')">Bob (Seller)</button>
+                <button (click)="quickLogin('admin@example.com', 'Admin', true)">Admin</button>
+            </div>
+        </div>
+    </div>
+</div>

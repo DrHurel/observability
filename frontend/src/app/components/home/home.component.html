@@ -1,0 +1,143 @@
+<div class="home-container">
+    <div class="hero">
+        <h1>🛒 Welcome to ShopTrack</h1>
+        <p class="subtitle">Buy, Sell, and Track Your Shopping Experience</p>
+        <div class="hero-actions">
+            @if (userContextService.isLoggedIn()) {
+            <a routerLink="/shop" class="btn btn-hero-primary">Browse Marketplace</a>
+            <a routerLink="/sell" class="btn btn-hero-secondary">Start Selling</a>
+            } @else {
+            <a routerLink="/register" class="btn btn-hero-primary">Get Started</a>
+            <a routerLink="/login" class="btn btn-hero-secondary">Sign In</a>
+            }
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-item">
+            <span class="stat-value">{{ totalProducts() }}</span>
+            <span class="stat-label">Products Listed</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">{{ categories().length }}</span>
+            <span class="stat-label">Categories</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">$ {{ avgPrice() | number:'1.0-0' }}</span>
+            <span class="stat-label">Avg. Price</span>
+        </div>
+    </div>
+
+    <section class="featured-section">
+        <div class="section-header">
+            <h2>🔥 Featured Products</h2>
+            <a routerLink="/shop" class="view-all">View All →</a>
+        </div>
+        <div class="products-grid">
+            @for (product of featuredProducts(); track product.id) {
+            <div class="product-card">
+                <div class="product-image">{{ getCategoryEmoji(product.name) }}</div>
+                <div class="product-info">
+                    <h3>{{ product.name }}</h3>
+                    <p class="product-price">${{ product.price | number:'1.2-2' }}</p>
+                    @if (product.expirationDate) {
+                    <p class="product-expiry">Exp: {{ product.expirationDate | date:'shortDate' }}</p>
+                    }
+                </div>
+            </div>
+            } @empty {
+            <div class="empty-products">
+                <p>No products yet. Be the first to sell!</p>
+                <a routerLink="/sell" class="btn btn-primary">Add Product</a>
+            </div>
+            }
+        </div>
+    </section>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="icon">🛍️</div>
+            <h2>Browse & Buy</h2>
+            <p>Explore thousands of products from sellers around the world. Filter by price, search by name, and find
+                your perfect item.</p>
+            <div class="card-actions">
+                <a routerLink="/shop" class="btn btn-primary">Go to Marketplace</a>
+            </div>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon">💼</div>
+            <h2>Sell Your Items</h2>
+            <p>List your products for sale. Manage your inventory, set prices, and reach a wide audience of buyers.</p>
+            <div class="card-actions">
+                <a routerLink="/sell" class="btn btn-primary">Start Selling</a>
+            </div>
+        </div>
+
+        <div class="feature-card highlight">
+            <div class="icon">🎭</div>
+            <h2>User Profiling</h2>
+            <p>We use advanced LPS (Log, Parse, Store) pattern to analyze your shopping behavior and personalize your
+                experience.</p>
+            <div class="card-actions">
+                <a routerLink="/profiles" class="btn btn-primary">View Profiles</a>
+            </div>
+            <div class="profile-types">
+                <span class="profile-badge read">📖 Reader</span>
+                <span class="profile-badge write">✏️ Seller</span>
+                <span class="profile-badge expensive">💰 Premium</span>
+                <span class="profile-badge balanced">⚖️ Balanced</span>
+            </div>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon">📊</div>
+            <h2>Analytics & Monitoring</h2>
+            <p>Real-time observability with distributed tracing, event streaming, and comprehensive dashboards.</p>
+            <div class="card-actions">
+                <a href="http://localhost:3000" target="_blank" class="btn btn-primary">Open Grafana</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="profiling-info">
+        <h3>🎯 How User Profiling Works</h3>
+        <div class="profiling-steps">
+            <div class="step">
+                <span class="step-number">1</span>
+                <div class="step-content">
+                    <strong>Register & Login</strong>
+                    <p>Create your account to start tracking your shopping behavior.</p>
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                <div class="step-content">
+                    <strong>Shop Around</strong>
+                    <p>Browse products, add items, make purchases. Every action is recorded.</p>
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                <div class="step-content">
+                    <strong>Get Profiled</strong>
+                    <p>View your behavioral profile - are you a reader, seller, or premium shopper?</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <h3>Built With Modern Technology</h3>
+        <div class="tech-tags">
+            <span class="tag">Angular 21</span>
+            <span class="tag">Spring Boot</span>
+            <span class="tag">MongoDB</span>
+            <span class="tag">Kafka</span>
+            <span class="tag">ClickHouse</span>
+            <span class="tag">Grafana</span>
+            <span class="tag">Docker</span>
+            <span class="tag">OpenTelemetry</span>
+        </div>
+    </div>
+</div>
