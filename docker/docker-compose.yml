@@ -187,6 +187,34 @@ services:
       retries: 3
       start_period: 20s
 
+  # Kafka Consumer Service - Standalone service for ClickHouse ingestion
+  kafka-consumer:
+    build:
+      context: ..
+      dockerfile: kafka-consumer/Dockerfile
+    container_name: kafka-consumer
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      CLICKHOUSE_URL: jdbc:clickhouse://clickhouse:8123/default
+      CLICKHOUSE_USERNAME: default
+      CLICKHOUSE_PASSWORD: ""
+    networks:
+      - observability-network
+    depends_on:
+      kafka:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
 volumes:
   mongodb-data:
     driver: local
