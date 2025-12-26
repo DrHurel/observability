@@ -60,13 +60,13 @@ When('I click on a product to view details', async function () {
     await this.productListPage.clickFirstProduct();
     this.lastAction = 'view_product_details';
     this.lastActionTimestamp = Date.now();
-    await this.driver.sleep(1000);
+    await this.driver.sleep(200);
 });
 
 Then('a trace should be created with a unique trace ID', async function () {
     // Traces are automatically created by OpenTelemetry
     // We verify by checking Jaeger for recent traces
-    await this.driver.sleep(2000); // Allow time for trace export
+    await this.driver.sleep(50); // Allow time for trace export
 
     try {
         const response = await axios.get(`${JAEGER_URL}/api/traces`, {
@@ -131,7 +131,7 @@ When('I perform a product search with term {string}', async function (searchTerm
     await this.navigation.goToProducts();
     // Perform search - implementation depends on UI
     this.lastSearchTerm = searchTerm;
-    await this.driver.sleep(500);
+    await this.driver.sleep(100);
 });
 
 Then('the HTTP request should include headers:', async function (dataTable) {
@@ -167,7 +167,7 @@ Given('I am logged in as {string}', async function (email) {
     // Navigate to login and authenticate
     await this.homePage.open();
     // Login implementation would go here
-    await this.driver.sleep(500);
+    await this.driver.sleep(100);
 });
 
 Given('I have an empty cart', async function () {
@@ -189,12 +189,12 @@ When('I perform the following actions:', async function (dataTable) {
             timestamp: Date.now()
         });
 
-        await this.driver.sleep(300);
+        await this.driver.sleep(50);
     }
 });
 
 Then('each action should generate a trace', async function () {
-    await this.driver.sleep(2000);
+    await this.driver.sleep(50);
 
     try {
         const response = await axios.get(`${JAEGER_URL}/api/traces`, {
@@ -239,7 +239,7 @@ Then('the trace duration should be recorded accurately', async function () {
 When('I attempt to view a non-existent product with ID {string}', async function (invalidId) {
     await this.driver.get(`${this.homePage.baseUrl}/products/${invalidId}`);
     this.lastRequestId = invalidId;
-    await this.driver.sleep(1000);
+    await this.driver.sleep(200);
 });
 
 Then('the trace should contain an error span with:', async function (dataTable) {
@@ -273,7 +273,7 @@ When('I generate {int} concurrent product requests', async function (count) {
 });
 
 Then('traces should be created for all requests', async function () {
-    await this.driver.sleep(3000);
+    await this.driver.sleep(100);
 
     try {
         const response = await axios.get(`${JAEGER_URL}/api/traces`, {
@@ -327,7 +327,7 @@ Given('traces have been generated in the last hour', async function () {
 
 When('I open the Grafana dashboard', async function () {
     await this.driver.get(GRAFANA_URL);
-    await this.driver.sleep(2000);
+    await this.driver.sleep(50);
 });
 
 Then('I should see the following panels:', async function (dataTable) {
@@ -409,7 +409,7 @@ When('I perform action {string} in tab {int} concurrently', async function (acti
 });
 
 Then('two separate traces should be created', async function () {
-    await this.driver.sleep(2000);
+    await this.driver.sleep(50);
 
     try {
         const response = await axios.get(`${JAEGER_URL}/api/traces`, {
@@ -447,7 +447,7 @@ Given('a trace has been generated for a product creation', async function () {
             description: 'Product for Jaeger UI test',
             expirationDate: getFutureExpirationDate()
         });
-        await this.driver.sleep(1000);
+        await this.driver.sleep(200);
     } catch (error) {
         console.log('Product creation for Jaeger test:', error.message);
     }
@@ -455,7 +455,7 @@ Given('a trace has been generated for a product creation', async function () {
 
 When('I navigate to Jaeger UI', async function () {
     await this.driver.get(JAEGER_URL);
-    await this.driver.sleep(2000);
+    await this.driver.sleep(50);
 });
 
 When('I search for traces by service {string}', async function (serviceName) {

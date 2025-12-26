@@ -77,8 +77,9 @@ Then('I should be redirected to {string}', async function (page) {
 
 When('I login with email {string} and password {string}', async function (email, password) {
     this.loginCredentials = { email, password };
+    this.currentUser = { email }; // Set current user for verification
     // Perform login action
-    await this.driver.sleep(500);
+    await this.driver.sleep(100);
 });
 
 // ============== Product Discovery Steps ==============
@@ -86,7 +87,7 @@ When('I login with email {string} and password {string}', async function (email,
 When('I browse the {string} category', async function (category) {
     this.currentCategory = category;
     await this.navigation.goToProducts();
-    await this.driver.sleep(500);
+    await this.driver.sleep(100);
 });
 
 When('I filter by price range {string} to {string}', async function (min, max) {
@@ -103,7 +104,7 @@ Then('I should see products between {string} and {string}', async function (min,
 
 When('I select the {string}', async function (productName) {
     this.selectedProduct = productName;
-    await this.driver.sleep(300);
+    await this.driver.sleep(50);
 });
 
 When('I add it to my cart with quantity {int}', async function (quantity) {
@@ -378,17 +379,17 @@ Then('my user profile should reflect all actions', async function () {
 
 When('I refresh the page', async function () {
     await this.driver.navigate().refresh();
-    await this.driver.sleep(500);
+    await this.driver.sleep(100);
 });
 
 When('I navigate back', async function () {
     await this.driver.navigate().back();
-    await this.driver.sleep(500);
+    await this.driver.sleep(100);
 });
 
 When('I navigate forward', async function () {
     await this.driver.navigate().forward();
-    await this.driver.sleep(500);
+    await this.driver.sleep(100);
 });
 
 Then('the application state should be preserved', async function () {

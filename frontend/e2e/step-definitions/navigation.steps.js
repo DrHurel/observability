@@ -3,22 +3,22 @@ const { expect } = require('chai');
 
 Given('I am on the products page', async function () {
     await this.navigation.goToProducts();
-    await this.driver.sleep(500);
+    await this.driver.sleep(100);
 });
 
 Given('I am on the marketplace page', async function () {
     await this.navigation.goToProducts();
-    await this.driver.sleep(500);
+    await this.driver.sleep(100);
 });
 
 Given('I am on the users page', async function () {
     await this.navigation.navigate('/profiles');
-    await this.driver.sleep(500);
+    await this.driver.sleep(100);
 });
 
 Given('I am on the profiles page', async function () {
     await this.navigation.navigate('/profiles');
-    await this.driver.sleep(500);
+    await this.driver.sleep(100);
 });
 
 Then('I should see the navigation bar', async function () {
@@ -28,7 +28,7 @@ Then('I should see the navigation bar', async function () {
 
 When('I scroll down the page', async function () {
     await this.navigation.scrollPage(500);
-    await this.driver.sleep(500);
+    await this.driver.sleep(100);
 });
 
 Then('the navigation bar should remain visible', async function () {
@@ -65,21 +65,21 @@ When('I click on {string} in the Browse card', async function (linkText) {
     if (linkText === 'Go to Marketplace') {
         await this.homePage.clickGoToMarketplace();
     }
-    await this.driver.sleep(1000);
+    await this.driver.sleep(200);
 });
 
 When('I click on {string} in the Sell card', async function (linkText) {
     if (linkText === 'Start Selling') {
         await this.homePage.clickStartSelling();
     }
-    await this.driver.sleep(1000);
+    await this.driver.sleep(200);
 });
 
 When('I click on {string} in the Profiling card', async function (linkText) {
     if (linkText === 'View Profiles') {
         await this.homePage.clickViewProfiles();
     }
-    await this.driver.sleep(1000);
+    await this.driver.sleep(200);
 });
 
 When('I click on {string} in the Analytics card', async function (linkText) {
