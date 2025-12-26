@@ -8,6 +8,8 @@ import fr.umontpellier.injectlog4j.config.LoggingRulesLoader;
 import fr.umontpellier.injectlog4j.runtime.LogInjector;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.IOException;
 
@@ -86,62 +88,31 @@ class InjectLog4JRulesTest {
         assertTrue(rule.triggersOnException(), "Should trigger OnException");
     }
 
-    @Test
-    void testProductAddRuleExists() {
-        LoggingRule rule = config.findRule(PRODUCT_SERVICE + ".addProduct");
-        assertNotNull(rule, "ProductService.addProduct rule should exist");
+    @ParameterizedTest
+    @CsvSource({
+        "ProductService.addProduct, addProduct",
+        "ProductService.deleteProduct, deleteProduct",
+        "ProductService.updateProduct, updateProduct",
+        "UserService.createUser, createUser"
+    })
+    void testRulesWithEntryAndReturn(String ruleName, String methodName) {
+        String serviceClass = ruleName.startsWith("ProductService") ? PRODUCT_SERVICE : USER_SERVICE;
+        LoggingRule rule = config.findRule(serviceClass + "." + methodName);
+        assertNotNull(rule, ruleName + " rule should exist");
         assertEquals("INFO", rule.getCriticality());
         assertTrue(rule.triggersOnEntry(), "Should trigger OnEntry");
         assertTrue(rule.triggersOnReturn(), "Should trigger OnReturn");
     }
 
-    @Test
-    void testProductDeleteRuleExists() {
-        LoggingRule rule = config.findRule(PRODUCT_SERVICE + ".deleteProduct");
-        assertNotNull(rule, "ProductService.deleteProduct rule should exist");
-        assertEquals("INFO", rule.getCriticality());
-        assertTrue(rule.triggersOnEntry(), "Should trigger OnEntry");
-        assertTrue(rule.triggersOnReturn(), "Should trigger OnReturn");
-    }
-
-    @Test
-    void testProductUpdateRuleExists() {
-        LoggingRule rule = config.findRule(PRODUCT_SERVICE + ".updateProduct");
-        assertNotNull(rule, "ProductService.updateProduct rule should exist");
-        assertEquals("INFO", rule.getCriticality());
-        assertTrue(rule.triggersOnEntry(), "Should trigger OnEntry");
-        assertTrue(rule.triggersOnReturn(), "Should trigger OnReturn");
-    }
-
-    @Test
-    void testUserCreateRuleExists() {
-        LoggingRule rule = config.findRule(USER_SERVICE + ".createUser");
-        assertNotNull(rule, "UserService.createUser rule should exist");
-        assertEquals("INFO", rule.getCriticality());
-        assertTrue(rule.triggersOnEntry(), "Should trigger OnEntry");
-        assertTrue(rule.triggersOnReturn(), "Should trigger OnReturn");
-    }
-
-    @Test
-    void testUserGetAllRuleExists() {
-        LoggingRule rule = config.findRule(USER_SERVICE + ".getAllUsers");
-        assertNotNull(rule, "UserService.getAllUsers rule should exist");
-        assertEquals("INFO", rule.getCriticality());
-        assertTrue(rule.triggersOnEntry(), "Should trigger OnEntry");
-    }
-
-    @Test
-    void testUserGetByIdRuleExists() {
-        LoggingRule rule = config.findRule(USER_SERVICE + ".getUserById");
-        assertNotNull(rule, "UserService.getUserById rule should exist");
-        assertEquals("INFO", rule.getCriticality());
-        assertTrue(rule.triggersOnEntry(), "Should trigger OnEntry");
-    }
-
-    @Test
-    void testUserGetByEmailRuleExists() {
-        LoggingRule rule = config.findRule(USER_SERVICE + ".getUserByEmail");
-        assertNotNull(rule, "UserService.getUserByEmail rule should exist");
+    @ParameterizedTest
+    @CsvSource({
+        "UserService.getAllUsers, getAllUsers",
+        "UserService.getUserById, getUserById",
+        "UserService.getUserByEmail, getUserByEmail"
+    })
+    void testUserRulesWithEntry(String ruleName, String methodName) {
+        LoggingRule rule = config.findRule(USER_SERVICE + "." + methodName);
+        assertNotNull(rule, ruleName + " rule should exist");
         assertEquals("INFO", rule.getCriticality());
         assertTrue(rule.triggersOnEntry(), "Should trigger OnEntry");
     }

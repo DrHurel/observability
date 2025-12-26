@@ -73,62 +73,94 @@ public class LoggingRulesLoader {
         // Parse loggers
         if (data.containsKey("loggers")) {
             Map<String, Map<String, Object>> loggersData = (Map<String, Map<String, Object>>) data.get("loggers");
-            Map<String, LoggerConfig> loggers = new HashMap<>();
-
-            for (Map.Entry<String, Map<String, Object>> entry : loggersData.entrySet()) {
-                LoggerConfig loggerConfig = new LoggerConfig();
-                Map<String, Object> loggerData = entry.getValue();
-
-                if (loggerData.containsKey("output")) {
-                    loggerConfig.setOutput((String) loggerData.get("output"));
-                }
-                if (loggerData.containsKey("format")) {
-                    loggerConfig.setFormat((String) loggerData.get("format"));
-                }
-                if (loggerData.containsKey("topic")) {
-                    loggerConfig.setTopic((String) loggerData.get("topic"));
-                }
-                if (loggerData.containsKey("bootstrapServers")) {
-                    loggerConfig.setBootstrapServers((String) loggerData.get("bootstrapServers"));
-                }
-                if (loggerData.containsKey("log4jLogger")) {
-                    loggerConfig.setLog4jLogger((String) loggerData.get("log4jLogger"));
-                }
-
-                loggers.put(entry.getKey(), loggerConfig);
-            }
-            config.setLoggers(loggers);
+            config.setLoggers(parseLoggers(loggersData));
         }
 
         // Parse rules
         if (data.containsKey("rules")) {
             List<Map<String, Object>> rulesData = (List<Map<String, Object>>) data.get("rules");
-            List<LoggingRule> rules = new ArrayList<>();
-
-            for (Map<String, Object> ruleData : rulesData) {
-                LoggingRule rule = new LoggingRule();
-
-                if (ruleData.containsKey("target")) {
-                    rule.setTarget((String) ruleData.get("target"));
-                }
-                if (ruleData.containsKey("criticality")) {
-                    rule.setCriticality((String) ruleData.get("criticality"));
-                }
-                if (ruleData.containsKey("why")) {
-                    rule.setWhy((List<String>) ruleData.get("why"));
-                }
-                if (ruleData.containsKey("message")) {
-                    rule.setMessage((String) ruleData.get("message"));
-                }
-                if (ruleData.containsKey("logger")) {
-                    rule.setLogger((String) ruleData.get("logger"));
-                }
-
-                rules.add(rule);
-            }
-            config.setRules(rules);
+            config.setRules(parseRules(rulesData));
         }
 
         return config;
+    }
+
+    /**
+     * Parse loggers from YAML data.
+     */
+    private static Map<String, LoggerConfig> parseLoggers(Map<String, Map<String, Object>> loggersData) {
+        Map<String, LoggerConfig> loggers = new HashMap<>();
+
+        for (Map.Entry<String, Map<String, Object>> entry : loggersData.entrySet()) {
+            LoggerConfig loggerConfig = parseLoggerConfig(entry.getValue());
+            loggers.put(entry.getKey(), loggerConfig);
+        }
+
+        return loggers;
+    }
+
+    /**
+     * Parse a single logger configuration.
+     */
+    private static LoggerConfig parseLoggerConfig(Map<String, Object> loggerData) {
+        LoggerConfig loggerConfig = new LoggerConfig();
+
+        if (loggerData.containsKey("output")) {
+            loggerConfig.setOutput((String) loggerData.get("output"));
+        }
+        if (loggerData.containsKey("format")) {
+            loggerConfig.setFormat((String) loggerData.get("format"));
+        }
+        if (loggerData.containsKey("topic")) {
+            loggerConfig.setTopic((String) loggerData.get("topic"));
+        }
+        if (loggerData.containsKey("bootstrapServers")) {
+            loggerConfig.setBootstrapServers((String) loggerData.get("bootstrapServers"));
+        }
+        if (loggerData.containsKey("log4jLogger")) {
+            loggerConfig.setLog4jLogger((String) loggerData.get("log4jLogger"));
+        }
+
+        return loggerConfig;
+    }
+
+    /**
+     * Parse rules from YAML data.
+     */
+    private static List<LoggingRule> parseRules(List<Map<String, Object>> rulesData) {
+        List<LoggingRule> rules = new ArrayList<>();
+
+        for (Map<String, Object> ruleData : rulesData) {
+            LoggingRule rule = parseLoggingRule(ruleData);
+            rules.add(rule);
+        }
+
+        return rules;
+    }
+
+    /**
+     * Parse a single logging rule.
+     */
+    @SuppressWarnings("unchecked")
+    private static LoggingRule parseLoggingRule(Map<String, Object> ruleData) {
+        LoggingRule rule = new LoggingRule();
+
+        if (ruleData.containsKey("target")) {
+            rule.setTarget((String) ruleData.get("target"));
+        }
+        if (ruleData.containsKey("criticality")) {
+            rule.setCriticality((String) ruleData.get("criticality"));
+        }
+        if (ruleData.containsKey("why")) {
+            rule.setWhy((List<String>) ruleData.get("why"));
+        }
+        if (ruleData.containsKey("message")) {
+            rule.setMessage((String) ruleData.get("message"));
+        }
+        if (ruleData.containsKey("logger")) {
+            rule.setLogger((String) ruleData.get("logger"));
+        }
+
+        return rule;
     }
 }

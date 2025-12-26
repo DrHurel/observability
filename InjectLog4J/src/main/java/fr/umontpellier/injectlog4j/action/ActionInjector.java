@@ -1,6 +1,5 @@
 package fr.umontpellier.injectlog4j.action;
 
-import fr.umontpellier.injectlog4j.action.UserAction.ActionType;
 import fr.umontpellier.injectlog4j.action.UserAction.EntityType;
 import fr.umontpellier.injectlog4j.action.UserAction.OperationType;
 import org.apache.logging.log4j.LogManager;
@@ -176,6 +175,7 @@ public class ActionInjector {
      */
     public void clearUserContext() {
         userContext.get().clear();
+        userContext.remove();
     }
 
     /**
@@ -207,7 +207,9 @@ public class ActionInjector {
                     .build();
 
             recorder.recordAction(action);
-            LOGGER.debug("Recorded entry action: {}", action.toStructuredLog());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Recorded entry action: {}", action.toStructuredLog());
+            }
 
         } catch (Exception e) {
             LOGGER.trace("Failed to record entry action: {}", e.getMessage());
@@ -250,7 +252,9 @@ public class ActionInjector {
                     .build();
 
             recorder.recordAction(action);
-            LOGGER.debug("Recorded return action: {}", action.toStructuredLog());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Recorded return action: {}", action.toStructuredLog());
+            }
 
         } catch (Exception e) {
             LOGGER.trace("Failed to record return action: {}", e.getMessage());
@@ -279,8 +283,9 @@ public class ActionInjector {
                     .build();
 
             recorder.recordAction(action);
-            LOGGER.debug("Recorded exception action: {}", action.toStructuredLog());
-
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Recorded exception action: {}", action.toStructuredLog());
+            }
         } catch (Exception e) {
             LOGGER.trace("Failed to record exception action: {}", e.getMessage());
         }
@@ -328,8 +333,8 @@ public class ActionInjector {
 
         // First String argument is often the ID
         for (Object arg : args) {
-            if (arg instanceof String) {
-                return (String) arg;
+            if (arg instanceof String strarg) {
+                return strarg;
             }
         }
         return null;
@@ -357,10 +362,10 @@ public class ActionInjector {
         try {
             Method getPrice = result.getClass().getMethod("getPrice");
             Object price = getPrice.invoke(result);
-            if (price instanceof BigDecimal) {
-                return ((BigDecimal) price).doubleValue();
-            } else if (price instanceof Number) {
-                return ((Number) price).doubleValue();
+            if (price instanceof BigDecimal bigDecimalPrice) {
+                return bigDecimalPrice.doubleValue();
+            } else if (price instanceof Number priceNumber) {
+                return priceNumber.doubleValue();
             }
         } catch (Exception e) {
             // Ignore
@@ -386,6 +391,7 @@ public class ActionInjector {
      * Shutdown the action injector.
      */
     public void shutdown() {
+        userContext.remove();
         if (recorder != null) {
             recorder.shutdown();
         }
