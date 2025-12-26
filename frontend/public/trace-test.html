@@ -240,7 +240,8 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:8080/api';
+        // Use relative URL so requests go through nginx proxy (allows tracing)
+        const API_URL = '/api';
         let requestCounter = 0;
 
         function log(message, type = 'info') {

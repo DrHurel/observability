@@ -4,11 +4,19 @@ import { ZoneContextManager } from '@opentelemetry/context-zone';
 import { Resource } from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
+// Check if we're running in a browser environment
+const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
+
 export class TracingService {
-    private static instance: TracingService;
-    private readonly provider: WebTracerProvider;
+    private static instance: TracingService | null = null;
+    private readonly provider: WebTracerProvider | null = null;
 
     private constructor() {
+        if (!isBrowser) {
+            console.log('OpenTelemetry tracing skipped (server-side rendering)');
+            return;
+        }
+
         // Create a resource with service information
         const resource = Resource.default().merge(
             new Resource({
@@ -17,8 +25,10 @@ export class TracingService {
         );
 
         // Configure the OTLP exporter to send traces to OpenTelemetry Collector via nginx proxy
+        // Use the current origin + /v1/traces for browser requests
+        const tracesUrl = `${window.location.origin}/v1/traces`;
         const otlpExporter = new OTLPTraceExporter({
-            url: '/v1/traces',
+            url: tracesUrl,
             headers: {},
         });
 
@@ -36,10 +46,10 @@ export class TracingService {
         // Create an initial span to verify tracing is working
         const tracer = this.provider.getTracer('frontend-tracer');
         const span = tracer.startSpan('frontend.page.load');
-        span.setAttribute('page.url', globalThis.location.href);
+        span.setAttribute('page.url', window.location.href);
         span.end();
 
-        console.log('OpenTelemetry tracing initialized for frontend');
+        console.log('OpenTelemetry tracing initialized for frontend at:', tracesUrl);
     }
 
     public static getInstance(): TracingService {
@@ -50,11 +60,22 @@ export class TracingService {
     }
 
     public getTracer(name: string = 'default') {
+        if (!this.provider) {
+            // Return a no-op tracer for SSR
+            return {
+                startSpan: () => ({
+                    setAttribute: () => { },
+                    end: () => { },
+                }),
+            } as any;
+        }
         return this.provider.getTracer(name);
     }
 }
 
-// Initialize tracing on module load
+// Initialize tracing on module load (only runs in browser)
 export function initializeTracing(): void {
-    TracingService.getInstance();
+    if (isBrowser) {
+        TracingService.getInstance();
+    }
 }

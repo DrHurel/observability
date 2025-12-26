@@ -12,11 +12,19 @@ import { registerInstrumentations } from '@opentelemetry/instrumentation';
 // deployment.environment is an experimental attribute, using string literal
 const ATTR_DEPLOYMENT_ENVIRONMENT = 'deployment.environment';
 
+// Check if we're running in a browser environment
+const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
+
 export class TracingService {
-    private static instance: TracingService;
-    private readonly provider: WebTracerProvider;
+    private static instance: TracingService | null = null;
+    private readonly provider: WebTracerProvider | null = null;
 
     private constructor() {
+        if (!isBrowser) {
+            console.log('OpenTelemetry tracing skipped (server-side rendering)');
+            return;
+        }
+
         // Create a resource with service information
         const resource = Resource.default().merge(
             new Resource({
@@ -26,9 +34,10 @@ export class TracingService {
             })
         );
 
-        // Configure the OTLP exporter to send traces to OpenTelemetry Collector
+        // Configure the OTLP exporter to send traces to OpenTelemetry Collector via nginx
+        const tracesUrl = `${window.location.origin}/v1/traces`;
         const otlpExporter = new OTLPTraceExporter({
-            url: 'http://localhost:4318/v1/traces',
+            url: tracesUrl,
             headers: {},
         });
 
@@ -50,15 +59,13 @@ export class TracingService {
                 new DocumentLoadInstrumentation(),
                 new FetchInstrumentation({
                     propagateTraceHeaderCorsUrls: [
-                        /http:\/\/localhost:8080\/.*/,
-                        /http:\/\/localhost:4200\/.*/,
+                        new RegExp(`${window.location.origin}/.*`),
                     ],
                     clearTimingResources: true,
                 }),
                 new XMLHttpRequestInstrumentation({
                     propagateTraceHeaderCorsUrls: [
-                        /http:\/\/localhost:8080\/.*/,
-                        /http:\/\/localhost:4200\/.*/,
+                        new RegExp(`${window.location.origin}/.*`),
                     ],
                     clearTimingResources: true,
                 }),
@@ -68,7 +75,7 @@ export class TracingService {
             ],
         });
 
-        console.log('OpenTelemetry tracing initialized for frontend');
+        console.log('OpenTelemetry tracing initialized for frontend at:', tracesUrl);
     }
 
     public static getInstance(): TracingService {
@@ -79,11 +86,22 @@ export class TracingService {
     }
 
     public getTracer(name: string = 'default') {
+        if (!this.provider) {
+            // Return a no-op tracer for SSR
+            return {
+                startSpan: () => ({
+                    setAttribute: () => { },
+                    end: () => { },
+                }),
+            } as any;
+        }
         return this.provider.getTracer(name);
     }
 }
 
-// Initialize tracing on module load
+// Initialize tracing on module load (only runs in browser)
 export function initializeTracing(): void {
-    TracingService.getInstance();
+    if (isBrowser) {
+        TracingService.getInstance();
+    }
 }
