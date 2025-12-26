@@ -33,10 +33,49 @@ echo "MongoDB: $(docker ps --filter name=mongodb --format '{{.Status}}' | grep -
 echo "ClickHouse: $(docker ps --filter name=clickhouse --format '{{.Status}}' | grep -o 'healthy')"
 echo "Kafka: $(docker ps --filter name=kafka --format '{{.Status}}' | grep -o 'healthy')"
 
-# 3. Install dependencies if needed
+# 3. Cleanup test data to avoid conflicts
 echo ""
-echo "📋 Step 3: Checking test dependencies..."
-cd "$(dirname "$0")/frontend"
+echo "📋 Step 3: Cleaning up test data..."
+echo "Removing test users..."
+docker exec mongodb mongosh --quiet observability --eval '
+  db.users.deleteMany({ 
+    $or: [
+      { email: { $regex: /test|example|dbtest|shopping|profile|api\./i } },
+      { name: { $regex: /test|demo|shopping/i } }
+    ]
+  });
+' 2>/dev/null || echo "  (MongoDB cleanup skipped)"
+
+echo "Removing test products..."
+docker exec mongodb mongosh --quiet observability --eval '
+  db.products.deleteMany({ 
+    $or: [
+      { name: { $regex: /test|demo|sample|e2e/i } },
+      { description: { $regex: /test|e2e/i } }
+    ]
+  });
+' 2>/dev/null || echo "  (MongoDB cleanup skipped)"
+
+echo "Removing test profiles..."
+docker exec mongodb mongosh --quiet observability --eval '
+  db.userProfiles.deleteMany({
+    $or: [
+      { userEmail: { $regex: /test|example|profile|api\./i } }
+    ]
+  });
+' 2>/dev/null || echo "  (MongoDB cleanup skipped)"
+
+echo "Cleaning ClickHouse test data..."
+docker exec clickhouse clickhouse-client --query "
+  ALTER TABLE user_actions DELETE WHERE user_email LIKE '%test%' OR user_email LIKE '%example%';
+" 2>/dev/null || echo "  (ClickHouse cleanup skipped)"
+
+echo -e "${GREEN}✅ Test data cleanup complete${NC}"
+
+# 4. Install dependencies if needed
+echo ""
+echo "📋 Step 4: Checking test dependencies..."
+cd "$(dirname "$0")/../frontend"
 if [ ! -d "node_modules" ] || [ ! -f "node_modules/.bin/cucumber-js" ]; then
     echo -e "${YELLOW}Installing dependencies...${NC}"
     npm install
@@ -44,10 +83,10 @@ else
     echo -e "${GREEN}✅ Dependencies already installed${NC}"
 fi
 
-# 4. Run E2E tests
+# 5. Run E2E tests
 echo ""
 echo "=============================================="
-echo "📋 Step 4: Running E2E Tests"
+echo "📋 Step 5: Running E2E Tests"
 echo "=============================================="
 echo ""
 
