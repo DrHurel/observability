@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, APP_INITIALIZER, PLATFORM_ID, inject } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideAppInitializer, PLATFORM_ID, inject } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
@@ -10,7 +10,7 @@ import { userContextInterceptor } from './services/user-context.interceptor';
 // Tracing initialization factory
 function initializeTracingFactory() {
   const platformId = inject(PLATFORM_ID);
-  
+
   return async () => {
     if (isPlatformBrowser(platformId)) {
       // Dynamically import to avoid SSR issues
@@ -27,10 +27,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withFetch(), withInterceptors([userContextInterceptor])),
     provideClientHydration(withEventReplay()),
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeTracingFactory,
-      multi: true,
-    }
+    provideAppInitializer(() => initializeTracingFactory()())
   ]
 };
