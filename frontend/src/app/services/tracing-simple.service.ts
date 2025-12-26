@@ -1,9 +1,8 @@
-import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-web';
+import { WebTracerProvider, BatchSpanProcessor } from '@opentelemetry/sdk-trace-web';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
 import { Resource } from '@opentelemetry/resources';
-import { SEMRESATTRS_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
 export class TracingService {
     private static instance: TracingService;
@@ -13,14 +12,9 @@ export class TracingService {
         // Create a resource with service information
         const resource = Resource.default().merge(
             new Resource({
-                [SEMRESATTRS_SERVICE_NAME]: 'observability-frontend',
+                [ATTR_SERVICE_NAME]: 'observability-frontend',
             })
         );
-
-        // Initialize the tracer provider
-        this.provider = new WebTracerProvider({
-            resource: resource,
-        });
 
         // Configure the OTLP exporter to send traces to OpenTelemetry Collector
         const otlpExporter = new OTLPTraceExporter({
@@ -28,8 +22,11 @@ export class TracingService {
             headers: {},
         });
 
-        // Use BatchSpanProcessor for better performance
-        this.provider.addSpanProcessor(new BatchSpanProcessor(otlpExporter));
+        // Initialize the tracer provider with BatchSpanProcessor for better performance
+        this.provider = new WebTracerProvider({
+            resource: resource,
+            spanProcessors: [new BatchSpanProcessor(otlpExporter)],
+        });
 
         // Register the provider
         this.provider.register({
@@ -39,7 +36,7 @@ export class TracingService {
         // Create an initial span to verify tracing is working
         const tracer = this.provider.getTracer('frontend-tracer');
         const span = tracer.startSpan('frontend.page.load');
-        span.setAttribute('page.url', window.location.href);
+        span.setAttribute('page.url', globalThis.location.href);
         span.end();
 
         console.log('OpenTelemetry tracing initialized for frontend');
