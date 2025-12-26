@@ -7,11 +7,13 @@ datasources:
     access: proxy
     url: http://clickhouse:8123
     jsonData:
-      defaultDatabase: observability
+      defaultDatabase: default
       host: clickhouse
       port: 8123
       protocol: http
       secure: false
+      dialTimeout: "30"
+      queryTimeout: "60"
     secureJsonData:
       username: default
       password: ""

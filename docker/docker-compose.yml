@@ -64,10 +64,11 @@ services:
     networks:
       - observability-network
     healthcheck:
-      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      test: ["CMD-SHELL", "clickhouse-client --query \"SELECT 1 FROM observability.user_events LIMIT 1\" 2>/dev/null || clickhouse-client --query \"SELECT 1\""]
       interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 10s
+      retries: 10
+      start_period: 30s
 
   # Grafana Service
   grafana:
@@ -79,6 +80,7 @@ services:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
       GF_INSTALL_PLUGINS: grafana-clickhouse-datasource
+      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: grafana-clickhouse-datasource
     volumes:
       - grafana-data:/var/lib/grafana
       - ../grafana/provisioning:/etc/grafana/provisioning
@@ -91,7 +93,8 @@ services:
       test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
 
   # Jaeger Service - Distributed Tracing Backend
   jaeger:

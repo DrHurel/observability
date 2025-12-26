@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
@@ -15,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,10 +38,11 @@ public class LogConsumerService {
     @Value("${clickhouse.password:}")
     private String clickhousePassword;
 
-    private Connection connection;
+    private volatile Connection connection;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final AtomicLong userEventIdCounter = new AtomicLong(1);
     private final AtomicLong productEventIdCounter = new AtomicLong(1);
+    private final AtomicBoolean isConnecting = new AtomicBoolean(false);
 
     private static final Pattern LOG_PATTERN = Pattern.compile(
             "^(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3})\\s+\\[([^\\]]+)\\]\\s+(\\w+)\\s+([\\w.]+)\\s+-\\s+(.+)$");
@@ -51,29 +54,69 @@ public class LogConsumerService {
         connectToClickHouse();
     }
 
-    private void connectToClickHouse() {
-        int maxRetries = 10;
+    private synchronized void connectToClickHouse() {
+        if (isConnecting.get()) {
+            return;
+        }
+        isConnecting.set(true);
+
+        int maxRetries = 30;
         int retryCount = 0;
+        int baseDelayMs = 2000;
+
         while (retryCount < maxRetries) {
             try {
+                if (connection != null && !connection.isClosed()) {
+                    isConnecting.set(false);
+                    return;
+                }
                 connection = DriverManager.getConnection(clickhouseUrl, clickhouseUsername, clickhousePassword);
                 log.info("Connected to ClickHouse for log ingestion");
                 initializeCounters();
+                isConnecting.set(false);
                 return;
             } catch (SQLException e) {
                 retryCount++;
-                log.warn("Failed to connect to ClickHouse (attempt {}/{}): {}", retryCount, maxRetries, e.getMessage());
+                int delayMs = Math.min(baseDelayMs * retryCount, 30000);
+                log.warn("Failed to connect to ClickHouse (attempt {}/{}): {}. Retrying in {}ms...",
+                        retryCount, maxRetries, e.getMessage(), delayMs);
                 if (retryCount < maxRetries) {
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(delayMs);
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
+                        isConnecting.set(false);
                         return;
                     }
                 }
             }
         }
-        log.error("Failed to connect to ClickHouse after {} attempts", maxRetries);
+        log.error("Failed to connect to ClickHouse after {} attempts. Will retry via scheduled task.", maxRetries);
+        isConnecting.set(false);
+    }
+
+    /**
+     * Periodically check and restore ClickHouse connection if needed.
+     */
+    @Scheduled(fixedDelay = 30000, initialDelay = 60000)
+    public void checkAndRestoreConnection() {
+        try {
+            if (connection == null || connection.isClosed()) {
+                log.info("ClickHouse connection lost, attempting to reconnect...");
+                connectToClickHouse();
+            }
+        } catch (SQLException e) {
+            log.warn("Error checking ClickHouse connection: {}", e.getMessage());
+            connectToClickHouse();
+        }
+    }
+
+    private boolean isConnectionValid() {
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
     private void initializeCounters() {
@@ -180,8 +223,10 @@ public class LogConsumerService {
     }
 
     private void insertUserEvent(String eventType, String userId, String userName, String userEmail) {
-        if (connection == null)
+        if (!isConnectionValid()) {
+            log.debug("ClickHouse connection not available, skipping user event insert");
             return;
+        }
 
         String sql = "INSERT INTO observability.user_events (id, timestamp, event_type, user_id, user_name, user_email, details) VALUES (?, now(), ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -198,8 +243,10 @@ public class LogConsumerService {
     }
 
     private void insertProductEvent(String eventType, String productId, String productName, double price) {
-        if (connection == null)
+        if (!isConnectionValid()) {
+            log.debug("ClickHouse connection not available, skipping product event insert");
             return;
+        }
 
         String sql = "INSERT INTO observability.product_events (id, timestamp, event_type, product_id, product_name, product_price, details) VALUES (?, now(), ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -252,8 +299,10 @@ public class LogConsumerService {
     }
 
     private void insertLog(LogEntry entry) {
-        if (connection == null)
+        if (!isConnectionValid()) {
+            log.debug("ClickHouse connection not available, skipping log insert");
             return;
+        }
 
         String sql = "INSERT INTO default.application_logs (timestamp, level, logger, message, thread) VALUES (?, ?, ?, ?, ?)";
 
