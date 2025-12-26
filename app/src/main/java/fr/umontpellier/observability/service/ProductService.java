@@ -1,23 +1,30 @@
 package fr.umontpellier.observability.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.umontpellier.observability.exception.ProductAlreadyExistsException;
 import fr.umontpellier.observability.exception.ProductNotFoundException;
 import fr.umontpellier.observability.model.Product;
 import fr.umontpellier.observability.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Log4j2
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
     private static final String PRODUCT_TOPIC = "product-events";
 
     @Transactional(readOnly = true)
@@ -39,8 +46,8 @@ public class ProductService {
 
         Product savedProduct = productRepository.save(product);
 
-        // Publish event to Kafka
-        kafkaTemplate.send(PRODUCT_TOPIC, "Product added: " + savedProduct.getId());
+        // Publish event to Kafka with JSON data
+        publishProductEvent("PRODUCT_ADDED", savedProduct);
 
         return savedProduct;
     }
@@ -53,7 +60,7 @@ public class ProductService {
         productRepository.deleteById(id);
 
         // Publish event to Kafka
-        kafkaTemplate.send(PRODUCT_TOPIC, "Product deleted: " + id);
+        publishProductEvent("PRODUCT_DELETED", id, null, BigDecimal.ZERO);
     }
 
     public Product updateProduct(String id, Product productDetails) {
@@ -66,9 +73,27 @@ public class ProductService {
 
         Product updatedProduct = productRepository.save(product);
 
-        // Publish event to Kafka
-        kafkaTemplate.send(PRODUCT_TOPIC, "Product updated: " + updatedProduct.getId());
+        // Publish event to Kafka with JSON data
+        publishProductEvent("PRODUCT_UPDATED", updatedProduct);
 
         return updatedProduct;
+    }
+
+    private void publishProductEvent(String eventType, Product product) {
+        publishProductEvent(eventType, product.getId(), product.getName(), product.getPrice());
+    }
+
+    private void publishProductEvent(String eventType, String productId, String productName, BigDecimal price) {
+        try {
+            Map<String, Object> event = new HashMap<>();
+            event.put("event_type", eventType);
+            event.put("product_id", productId);
+            event.put("product_name", productName != null ? productName : "");
+            event.put("product_price", price != null ? price.doubleValue() : 0.0);
+            event.put("timestamp", System.currentTimeMillis());
+            kafkaTemplate.send(PRODUCT_TOPIC, objectMapper.writeValueAsString(event));
+        } catch (Exception e) {
+            log.warn("Failed to publish product event: {}", e.getMessage());
+        }
     }
 }
