@@ -3,11 +3,8 @@
 
 rules:
   # ==================== UserProfileService rules ====================
-  - target: fr.umontpellier.observability.service.UserProfileService.recordAction
-    criticality: INFO
-    why: [OnReturn]
-    message: "Updated user profile"
-    logger: business
+  # NOTE: recordAction is NOT logged to avoid infinite recursion
+  # (logging triggers ActionRecorder which calls recordAction)
 
   - target: fr.umontpellier.observability.service.UserProfileService.processLogs
     criticality: INFO

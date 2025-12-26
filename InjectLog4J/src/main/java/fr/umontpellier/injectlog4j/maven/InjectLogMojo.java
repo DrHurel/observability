@@ -83,7 +83,9 @@ public class InjectLogMojo extends AbstractMojo {
      * Optional path to the logging.rules.yaml configuration file.
      * If not specified, the default location
      * (src/main/resources/logging.rules.yaml) is used.
-     * @deprecated Use resourceDirectory instead to load all *.logging.rules.yaml files
+     * 
+     * @deprecated Use resourceDirectory instead to load all *.logging.rules.yaml
+     *             files
      */
     @Parameter
     @Deprecated
@@ -126,7 +128,8 @@ public class InjectLogMojo extends AbstractMojo {
             if (resourceDirectory != null && resourceDirectory.exists()) {
                 getLog().info("Loading configuration from directory: " + resourceDirectory);
                 config = LoggingRulesLoader.loadAllFromDirectory(resourceDirectory.toPath());
-                getLog().info("Loaded " + config.getLoggers().size() + " loggers and " + config.getRules().size() + " rules");
+                getLog().info(
+                        "Loaded " + config.getLoggers().size() + " loggers and " + config.getRules().size() + " rules");
                 projectProcessor.process(inputPath, outputPath, config);
             } else if (configFile != null && configFile.exists()) {
                 getLog().info("Using configuration: " + configFile);

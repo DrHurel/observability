@@ -198,11 +198,11 @@ public class LoggingRulesLoader {
         }
 
         List<Path> configFiles = new ArrayList<>();
-        
+
         // Find all *.logging.rules.yaml files
         try (Stream<Path> stream = Files.list(directory)) {
             stream.filter(p -> p.getFileName().toString().endsWith(RULES_FILE_SUFFIX))
-                  .forEach(configFiles::add);
+                    .forEach(configFiles::add);
         }
 
         // Also check for legacy file
@@ -221,8 +221,8 @@ public class LoggingRulesLoader {
 
         if (mergedConfig.getLoggers().isEmpty() && mergedConfig.getRules().isEmpty()) {
             throw new IOException(
-                    "No logging rules configuration files found in " + directory + 
-                    " (*.logging.rules.yaml or logging.rules.yaml)");
+                    "No logging rules configuration files found in " + directory +
+                            " (*.logging.rules.yaml or logging.rules.yaml)");
         }
 
         return mergedConfig;
